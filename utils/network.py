@@ -607,10 +607,11 @@ class NetGINConv_ve(torch.nn.Module):
         torch.nn.init.xavier_uniform_(self.conv2Dd.weight, gain=torch.nn.init.calculate_gain('leaky_relu'))
         
         self.d_model = 4
+        self.output_norm = torch.nn.LayerNorm(self.d_model)
         self.decoder_layers = torch.nn.TransformerDecoderLayer(self.d_model, config['training']['num_heads'], config['training']['ffl'], dropout=config['training']['dropout'], batch_first=True) 
         self.decoder = torch.nn.TransformerDecoder(self.decoder_layers, num_layers=config['training']['num_layers'])
         self.positional_encoding = PositionalEncoding(self.d_model, 26)
-        self.kan_output = KAN([self.d_model, 2])
+        self.kan_output = KAN([self.d_model, 2], grid_size=10, grid_range=[-2, 2])
 
     def create_tgt_mask(self, seq_len):
         # Create a lower triangular matrix of shape (seq_len, seq_len)
@@ -634,6 +635,7 @@ class NetGINConv_ve(torch.nn.Module):
         tgt = self.positional_encoding(tgt)
         output = self.decoder.forward(tgt, x, tgt_mask=self.create_tgt_mask(tgt.size(1)))
 
+        output = self.output_norm(output)
         output = self.kan_output(output)
         return output
     
@@ -653,5 +655,6 @@ class NetGINConv_ve(torch.nn.Module):
             start_token = torch.cat((start_token, predt1), dim=1)
             pred = torch.cat((pred, predt1), dim=1)   
         
+        pred = self.output_norm(pred)
         pred = self.kan_output(pred)
         return pred
