@@ -1,0 +1,30 @@
+input_data:
+  dataset:
+  - Carolinas_eyelevel
+  observed_steps: 10
+  points_per_position: 2
+  prtediction_step: 25
+  reduction_ratio: 16
+  subject: vehicle
+  test_folder: test
+  train_folder: train
+  val_folder: val
+training:
+  batch_size: 16
+  device: cuda:1
+  dropout: 0.2
+  epoches: 80
+  ffl: 256
+  learning_rate: 0.01
+  milestones:
+  - 10
+  - 30
+  - 45
+  model_dir: None
+  num_heads: 4
+  num_layers: 8
+  save_folder: vb
+  save_model: true
+  train: true
+  validation_interval: 1
+  weight_decay: 0.0005

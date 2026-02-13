@@ -1,0 +1,34 @@
+input_data:
+  dataset:
+  - eth
+  - hotel
+  - univ
+  - zara1
+  - zara2
+  observed_steps: 8
+  points_per_position: 2
+  prtediction_step: 12
+  reduction_ratio: 16
+  subject: pedestrian
+  test_folder: test
+  train_folder: train
+  val_folder: test
+training:
+  batch_size: 256
+  device: cuda:0
+  dropout: 0.7
+  epoches: 20
+  ffl: 16
+  learning_rate: 0.01
+  milestones:
+  - 10
+  - 30
+  - 45
+  model_dir: models/pb/2026-02-11_14-12-22
+  num_heads: 2
+  num_layers: 2
+  save_folder: pb
+  save_model: true
+  train: true
+  validation_interval: 1
+  weight_decay: 0.001

@@ -1,0 +1,30 @@
+input_data:
+  dataset:
+  - Carolinas_eyelevel
+  observed_steps: 10
+  points_per_position: 2
+  prtediction_step: 25
+  reduction_ratio: 16
+  subject: vehicle
+  test_folder: test_1k1
+  train_folder: train_1k1
+  val_folder: val_1k1
+training:
+  batch_size: 16
+  device: cuda:0
+  dropout: 0.2
+  epoches: 80
+  ffl: 256
+  learning_rate: 0.01
+  milestones:
+  - 10
+  - 30
+  - 45
+  model_dir: /home/adaneshp/PishguVe_Tran/models/vb/2023-10-21_13-18-03
+  num_heads: 4
+  num_layers: 8
+  save_folder: vb
+  save_model: false
+  train: false
+  validation_interval: 1
+  weight_decay: 0.0005
