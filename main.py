@@ -54,8 +54,11 @@ if config['training']['train']:
 
         device = torch.device(config['training']['device'] if torch.cuda.is_available() else 'cpu')
         model = net.NetGINConv_ve(num_features, output_size, config).to(device)
+        
+        # Print total parameters
         total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
         print(f"Total Trainable Parameters: {total_params}")
+
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=config['training']['weight_decay'])
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=config['training']['milestones'], gamma=0.1)
 
@@ -109,8 +112,11 @@ else:
             all_normal_RMSE = []
             device = torch.device(config['training']['device'] if torch.cuda.is_available() else 'cpu')
             model = net.NetGINConv_ve(num_features, output_size, config).to(device)
+            
+            # Print total parameters
             total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
             print(f"Total Trainable Parameters: {total_params}")
+
             model_folder = 'models/TRAINED/'
             model.load_state_dict(torch.load(os.path.join(config['training']['model_dir'], test_file)+".pt", map_location='cpu'))
             data_dir = 'datasets/'+test_file+'/'
@@ -211,4 +217,3 @@ else:
         print (res)
         print ("Average ADE: ", str(avg_ade))
         print ("Average FDE: ", str(avg_fde))
-
