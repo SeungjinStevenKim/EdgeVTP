@@ -1,0 +1,14 @@
+NGSIM Benchmark Summary
+====================================================================================================
+Original 20ep  ADE: 1.1080  FDE: 2.3452  RMSE  1s:0.37 2s:0.81 3s:1.29 4s:1.82 5s:2.39
+Original 40ep  ADE: 1.1877  FDE: 2.4523  RMSE  1s:0.42 2s:0.88 3s:1.37 4s:1.91 5s:2.49
+Original 80ep  ADE: 0.9600  FDE: 2.0564  RMSE  1s:0.33 2s:0.70 3s:1.12 4s:1.59 5s:2.11
+30m filter 20ep  ADE: 1.5934  FDE: 3.1757  RMSE  1s:1.07 2s:2.14 3s:3.23 4s:4.35 5s:5.48
+30m filter 40ep  ADE: 0.7784  FDE: 1.7571  RMSE  1s:0.23 2s:0.52 3s:0.88 4s:1.30 5s:1.77
+30m filter 80ep  ADE: 0.9932  FDE: 2.1200  RMSE  1s:0.33 2s:0.70 3s:1.13 4s:1.60 5s:2.12
+30m+aug 20ep  ADE: 0.9130  FDE: 1.9787  RMSE  1s:0.30 2s:0.66 3s:1.07 4s:1.53 5s:2.04
+30m+aug 40ep  ADE: 0.9485  FDE: 2.0574  RMSE  1s:0.30 2s:0.66 3s:1.07 4s:1.54 5s:2.05
+30m+aug 80ep  ADE: 0.9854  FDE: 2.1133  RMSE  1s:0.32 2s:0.70 3s:1.12 4s:1.59 5s:2.12
+Aug only 20ep  ADE: 0.9598  FDE: 2.0763  RMSE  1s:0.31 2s:0.68 3s:1.10 4s:1.57 5s:2.09
+Aug only 40ep  ADE: 2.2779  FDE: 4.4927  RMSE  1s:1.07 2s:2.16 3s:3.27 4s:4.40 5s:5.55
+Aug only 80ep  ADE: 0.9988  FDE: 2.1182  RMSE  1s:0.34 2s:0.73 3s:1.16 4s:1.63 5s:2.16

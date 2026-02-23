@@ -1,0 +1,35 @@
+# NGSIM: 30m filter + scale_only + 5deg rotation aug 40ep
+input_data:
+  dataset: ['ngsim']
+  subject: vehicle
+  train_folder: train_1k
+  val_folder: val_1k
+  test_folder: test_1k
+  observed_steps: 15
+  prtediction_step: 25
+  points_per_position: 2
+  reduction_ratio: 16
+  relation_neighbor_limit_meter: 30.0
+  augment: true
+  augment_mode: scale_only
+  augment_rotation: 5.0  # New parameter: +/- 5 degrees rotation
+
+training:
+  save_model: true
+  train: false
+  validation_interval: 1
+  device: 'cuda:0'
+  batch_size: 16
+  weight_decay: 0.0005
+  milestones: [10, 30, 45]
+  epoches: 40
+  experiment_root: 'experiments/vehicle'
+  run_name: "inference_ngsim_30m_aug_rot5_40ep"
+  backbone: 'transformer'
+  output_type: 'mlp'
+  model_dir: 'experiments/vehicle/train/train_ngsim_30m_aug_rot5_40ep'
+  learning_rate: 0.01
+  num_heads: 2
+  num_layers: 2
+  ffl: 16
+  dropout: 0.2

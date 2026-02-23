@@ -1,0 +1,15 @@
+Experiment: inference_mamba_10m_v1
+Model dir: experiments/pedestrian/train/train_mamba_10m_v1
+Relation limit: 10.0m
+
+eth  ADE: 2.2170  FDE: 4.2670
+hotel  ADE: 2.2865  FDE: 3.7001
+univ  ADE: 2.0840  FDE: 4.2607
+zara1  ADE: 1.7817  FDE: 2.7778
+zara2  ADE: 1.2003  FDE: 2.1395
+
+Average ADE: 1.9139
+Average FDE: 3.4290
+
+Summary | 1.2s | 2.4s | 3.6s | 4.8s | ADE | FDE
+inference_mamba_10m_v1 | 1.03 | 1.78 | 2.59 | 3.49 | 1.91 | 3.43

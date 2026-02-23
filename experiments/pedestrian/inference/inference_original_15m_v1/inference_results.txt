@@ -1,0 +1,15 @@
+Experiment: inference_original_15m_v1
+Model dir: experiments/pedestrian/train/train_original_15m_v1
+Relation limit: 15.0m
+
+eth  ADE: 1.1132  FDE: 1.6896
+hotel  ADE: 1.5774  FDE: 2.7912
+univ  ADE: 1.0559  FDE: 1.9902
+zara1  ADE: 0.5724  FDE: 1.0770
+zara2  ADE: 1.2493  FDE: 2.2093
+
+Average ADE: 1.1136
+Average FDE: 1.9515
+
+Summary | 1.2s | 2.4s | 3.6s | 4.8s | ADE | FDE
+inference_original_15m_v1 | 0.60 | 1.05 | 1.47 | 1.94 | 1.11 | 1.95

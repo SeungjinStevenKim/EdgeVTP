@@ -1,0 +1,33 @@
+# NGSIM FULL: Inference (uses trained model from train_ngsim_full_25m_aug)
+input_data:
+  dataset: ['ngsim']
+  subject: vehicle
+  train_folder: train
+  val_folder: val
+  test_folder: test
+  observed_steps: 15
+  prtediction_step: 25
+  points_per_position: 2
+  reduction_ratio: 16
+  relation_neighbor_limit_meter: 25.0
+
+training:
+  save_model: false
+  train: false
+  validation_interval: 1
+  device: 'cuda:0'
+  batch_size: 64
+  weight_decay: 0.0005
+  milestones: [10, 30, 45]
+  epoches: 80
+  experiment_root: 'experiments/vehicle'
+  run_name: 'inference_ngsim_full_25m_aug'
+
+  backbone: 'transformer'
+  output_type: 'mlp'
+  model_dir: 'experiments/vehicle/train/train_ngsim_full_25m_aug'
+  learning_rate: 0.01
+  num_heads: 4
+  num_layers: 8
+  ffl: 256
+  dropout: 0.2

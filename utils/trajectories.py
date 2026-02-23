@@ -64,6 +64,65 @@ def read_file(_path, delim='\t'):
     return np.asarray(data)
 
 
+def _augment_scene(obs_traj, pred_traj, obs_traj_rel, pred_traj_rel, prob_rotate=0.5, prob_flip=0.5, scale_range=(0.95, 1.05), mode='full', augment_rotation=None):
+    """
+    Apply random augmentation to a scene. Same transform for all agents (shared coordinate frame).
+    obs_traj: [N, 2, obs_len], pred_traj: [N, 2, pred_len]
+
+    Args:
+        mode: 'full' = rotation + flip + scale (pedestrian). 'scale_only' = scale only (vehicle-safe).
+        augment_rotation: If set (float, degrees), allows limited rotation even in 'scale_only' mode.
+                          Range will be [-augment_rotation, +augment_rotation].
+    """
+    obs_traj = obs_traj.clone()
+    pred_traj = pred_traj.clone()
+
+    all_pos = torch.cat([obs_traj, pred_traj], dim=2)  # [N, 2, obs_len+pred_len]
+    center = all_pos.mean(dim=(0, 2), keepdim=True)  # [1, 2, 1]
+
+    # Random rotation
+    # - In 'full' mode: full 0-2pi rotation
+    # - In 'scale_only' mode: only if augment_rotation is specified (limited range)
+    should_rotate = False
+    rot_min, rot_max = 0, 2 * np.pi
+    
+    if mode == 'full':
+        should_rotate = True
+    elif mode == 'scale_only' and augment_rotation is not None and augment_rotation > 0:
+        should_rotate = True
+        rad = np.radians(augment_rotation)
+        rot_min, rot_max = -rad, rad
+
+    if should_rotate and np.random.rand() < prob_rotate:
+        angle = np.random.uniform(rot_min, rot_max)
+        c, s = np.cos(angle), np.sin(angle)
+        R = torch.tensor([[c, -s], [s, c]], dtype=obs_traj.dtype, device=obs_traj.device)
+        obs_traj = (obs_traj - center).permute(0, 2, 1) @ R.T + center.permute(0, 2, 1)
+        obs_traj = obs_traj.permute(0, 2, 1)
+        pred_traj = (pred_traj - center).permute(0, 2, 1) @ R.T + center.permute(0, 2, 1)
+        pred_traj = pred_traj.permute(0, 2, 1)
+
+    # Random flip (x-axis)
+    if mode == 'full' and np.random.rand() < prob_flip:
+        obs_traj[:, 0, :] = -obs_traj[:, 0, :] + 2 * center[0, 0, 0]
+        pred_traj[:, 0, :] = -pred_traj[:, 0, :] + 2 * center[0, 0, 0]
+
+    # Random scale (both full and scale_only)
+    if np.random.rand() < 0.5:
+        scale = np.random.uniform(*scale_range)
+        obs_traj = (obs_traj - center) * scale + center
+        pred_traj = (pred_traj - center) * scale + center
+
+    # Recompute relative trajectories
+    obs_traj_rel = torch.zeros_like(obs_traj_rel)
+    obs_traj_rel[:, :, 1:] = obs_traj[:, :, 1:] - obs_traj[:, :, :-1]
+    pred_traj_rel = torch.zeros_like(pred_traj_rel)
+    pred_traj_rel[:, :, 0] = pred_traj[:, :, 0] - obs_traj[:, :, -1]
+    pred_traj_rel[:, :, 1:] = pred_traj[:, :, 1:] - pred_traj[:, :, :-1]
+
+    return obs_traj, pred_traj, obs_traj_rel, pred_traj_rel
+
+
 def poly_fit(traj, traj_len, threshold):
     """
     Input:
@@ -86,7 +145,7 @@ class TrajectoryDataset(Dataset):
     """Dataloder for the Trajectory datasets"""
     def __init__(
         self, data_dir, obs_len=8, pred_len=12, skip=1, threshold=0.002,
-        min_ped=1, delim='\t'
+        min_ped=1, delim='\t', augment=False, augment_mode='full', augment_rotation=None
     ):
         """
         Args:
@@ -99,10 +158,16 @@ class TrajectoryDataset(Dataset):
         when using a linear predictor
         - min_ped: Minimum number of pedestrians that should be in a seqeunce
         - delim: Delimiter in the dataset files
+        - augment: If True, apply augmentation during __getitem__
+        - augment_mode: 'full' (rotation+flip+scale, pedestrian) | 'scale_only' (vehicle-safe)
+        - augment_rotation: (float) limited rotation angle in degrees for vehicle/scale_only mode
         """
         super(TrajectoryDataset, self).__init__()
 
         self.data_dir = data_dir
+        self.augment = augment
+        self.augment_mode = augment_mode
+        self.augment_rotation = augment_rotation
         self.obs_len = obs_len
         self.pred_len = pred_len
         self.skip = skip
@@ -203,9 +268,19 @@ class TrajectoryDataset(Dataset):
 
     def __getitem__(self, index):
         start, end = self.seq_start_end[index]
+        obs_traj = self.obs_traj[start:end, :].clone()
+        pred_traj = self.pred_traj[start:end, :].clone()
+        obs_traj_rel = self.obs_traj_rel[start:end, :].clone()
+        pred_traj_rel = self.pred_traj_rel[start:end, :].clone()
+
+        if self.augment:
+            obs_traj, pred_traj, obs_traj_rel, pred_traj_rel = _augment_scene(
+                obs_traj, pred_traj, obs_traj_rel, pred_traj_rel,
+                mode=self.augment_mode, augment_rotation=self.augment_rotation
+            )
+
         out = [
-            self.obs_traj[start:end, :], self.pred_traj[start:end, :],
-            self.obs_traj_rel[start:end, :], self.pred_traj_rel[start:end, :],
+            obs_traj, pred_traj, obs_traj_rel, pred_traj_rel,
             self.non_linear_ped[start:end], self.loss_mask[start:end, :],
             self.seq_frame_id[start:end, :]
         ]

@@ -1,0 +1,11 @@
+Experiment: inference_ngsim_oneshot_bezier_20ep
+Model dir: experiments/vehicle/train/train_ngsim_oneshot_bezier_20ep
+Relation limit: Nonem
+
+ngsim  ADE: 0.7474  FDE: 1.6985
+
+Average ADE: 0.7474
+Average FDE: 1.6985
+
+Summary | 1s | 2s | 3s | 4s | 5s | ADE | FDE
+inference_ngsim_oneshot_bezier_20ep | 0.29 | 0.68 | 1.13 | 1.64 | 2.22 | 0.75 | 1.70

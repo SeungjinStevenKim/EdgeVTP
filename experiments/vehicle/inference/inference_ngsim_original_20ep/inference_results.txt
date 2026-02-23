@@ -1,0 +1,11 @@
+Experiment: inference_ngsim_original_20ep
+Model dir: experiments/vehicle/train/train_ngsim_original_20ep
+Relation limit: Nonem
+
+ngsim  ADE: 1.1080  FDE: 2.3452
+
+Average ADE: 1.1080
+Average FDE: 2.3452
+
+Summary | 1s | 2s | 3s | 4s | 5s | ADE | FDE
+inference_ngsim_original_20ep | 0.37 | 0.81 | 1.29 | 1.82 | 2.39 | 1.11 | 2.35

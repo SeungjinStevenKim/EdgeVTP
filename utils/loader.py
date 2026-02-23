@@ -16,17 +16,20 @@ from torch.utils.data import DataLoader
 from utils.trajectories import TrajectoryDataset, seq_collate
 
 
-def data_loader(path, batch_size=64, obs_len=8, pred_len=12, delim='space', debug=False):
+def data_loader(path, batch_size=64, obs_len=8, pred_len=12, delim='space', debug=False, augment=False, augment_mode='full', augment_rotation=None):
     dset = TrajectoryDataset(
         path,
         obs_len,
         pred_len,
         skip=1,
-        delim=delim)
+        delim=delim,
+        augment=augment,
+        augment_mode=augment_mode,
+        augment_rotation=augment_rotation)
     loader = DataLoader(
         dset,
         batch_size=batch_size,
         shuffle=True,
-        num_workers=32,
+        num_workers=16,
         collate_fn=seq_collate)
     return dset, loader

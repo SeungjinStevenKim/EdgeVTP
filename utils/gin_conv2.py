@@ -65,15 +65,20 @@ class GINConv(MessagePassing):
     #     out = self.nn((1 + self.eps) * x + self.propagate(edge_index, x=x))
     #     return out
 
-    #Our modified forward function
-    def forward(self, x, edge_index):
+    # Our modified forward: supports optional edge_weight (closer = higher weight)
+    def forward(self, x, edge_index, edge_weight=None):
         """"""
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         edge_index, _ = remove_self_loops(edge_index)
-        out = self.nn((1 + self.eps) * x) + self.nn2(self.propagate(edge_index, x=x))
+        kwargs = {'x': x}
+        if edge_weight is not None:
+            kwargs['edge_weight'] = edge_weight
+        out = self.nn((1 + self.eps) * x) + self.nn2(self.propagate(edge_index, **kwargs))
         return out
 
-    def message(self, x_j):
+    def message(self, x_j, edge_weight=None):
+        if edge_weight is not None and isinstance(edge_weight, torch.Tensor) and edge_weight.numel() > 0:
+            return x_j * edge_weight.unsqueeze(-1)
         return x_j
 
     def __repr__(self):

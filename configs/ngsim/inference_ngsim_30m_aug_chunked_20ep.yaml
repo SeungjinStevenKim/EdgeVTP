@@ -1,0 +1,26 @@
+# NGSIM: Inference 30m + aug + chunk 20ep
+input_data:
+  dataset: ['ngsim']
+  subject: vehicle
+  train_folder: train_1k
+  val_folder: val_1k
+  test_folder: test_1k
+  observed_steps: 15
+  prtediction_step: 25
+  points_per_position: 2
+  reduction_ratio: 16
+  relation_neighbor_limit_meter: 30.0
+  augment: false
+
+training:
+  save_model: false
+  train: false
+  device: 'cuda:0'
+  batch_size: 16
+  experiment_root: 'experiments/vehicle'
+  run_name: 'inference_ngsim_30m_aug_chunked_20ep'
+  backbone: 'transformer'
+  output_type: 'mlp'
+  use_chunked: true
+  chunk_size: 5
+  model_dir: 'experiments/vehicle/train/train_ngsim_30m_aug_chunked_20ep'

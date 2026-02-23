@@ -1,0 +1,15 @@
+Experiment: inference_kan_10m_v1
+Model dir: experiments/pedestrian/train/train_kan_10m_v1
+Relation limit: 10.0m
+
+eth  ADE: 1.2269  FDE: 2.1930
+hotel  ADE: 1.4521  FDE: 2.6496
+univ  ADE: 1.6443  FDE: 2.7731
+zara1  ADE: 0.9799  FDE: 1.8305
+zara2  ADE: 0.9540  FDE: 1.7866
+
+Average ADE: 1.2514
+Average FDE: 2.2466
+
+Summary | 1.2s | 2.4s | 3.6s | 4.8s | ADE | FDE
+inference_kan_10m_v1 | 0.65 | 1.18 | 1.71 | 2.29 | 1.25 | 2.25

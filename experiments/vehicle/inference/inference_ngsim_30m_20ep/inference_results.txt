@@ -1,0 +1,11 @@
+Experiment: inference_ngsim_30m_20ep
+Model dir: experiments/vehicle/train/train_ngsim_30m_20ep
+Relation limit: 30.0m
+
+ngsim  ADE: 1.5934  FDE: 3.1757
+
+Average ADE: 1.5934
+Average FDE: 3.1757
+
+Summary | 1s | 2s | 3s | 4s | 5s | ADE | FDE
+inference_ngsim_30m_20ep | 1.07 | 2.14 | 3.23 | 4.35 | 5.48 | 1.59 | 3.18

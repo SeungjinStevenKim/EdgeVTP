@@ -1,0 +1,28 @@
+# NGSIM: Inference One-Shot Bezier + 30M filter + data augmentation 20ep
+input_data:
+  dataset: ['ngsim']
+  subject: vehicle
+  train_folder: train_1k
+  val_folder: val_1k
+  test_folder: test_1k
+  observed_steps: 15
+  prtediction_step: 25
+  points_per_position: 2
+  reduction_ratio: 16
+  relation_neighbor_limit_meter: 30.0
+  augment: false
+
+training:
+  train: false
+  save_model: false
+  device: 'cuda:0'
+  batch_size: 16
+  experiment_root: 'experiments/vehicle'
+  model_dir: 'experiments/vehicle/train/train_ngsim_30m_aug_oneshot_bezier_20ep'
+  run_name: 'inference_ngsim_30m_aug_oneshot_bezier_20ep'
+  backbone: 'transformer'
+  output_type: 'one_shot_bezier'
+  num_heads: 2
+  num_layers: 2
+  ffl: 16
+  dropout: 0.2

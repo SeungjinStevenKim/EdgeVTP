@@ -1,21 +1,8 @@
-# Some of the functions in this file based on the following git repository: https://github.com/agrimgupta92/sgan
-# These include relative_to_abs, l2_loss, displacement_error, and final_displacement_error
-
-# It is for operations from the data presented in thier paper Social-GAN https://arxiv.org/abs/1803.10892
-
-# The paper is cited as follows:
-#@inproceedings{gupta2018social,
-#  title={Social GAN: Socially Acceptable Trajectories with Generative Adversarial Networks},
-#  author={Gupta, Agrim and Johnson, Justin and Fei-Fei, Li and Savarese, Silvio and Alahi, Alexandre},
-#  booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
-#  number={CONF},
-#  year={2018}
-#}
-
 #util.py
 import torch
 import os
 import numpy as np
+from scipy.spatial import cKDTree
 from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch as tgb
 from tqdm import tqdm
@@ -23,32 +10,20 @@ from tqdm import tqdm
 def relative_to_abs(rel_traj, start_pos):
     """
     Inputs:
-    - rel_traj: pytorch tensor of shape (seq_len, batch, 2)
+    - rel_traj: pytorch tensor of shape (batch, seq_len, 2)
     - start_pos: pytorch tensor of shape (batch, 2)
     Outputs:
-    - abs_traj: pytorch tensor of shape (seq_len, batch, 2)
+    - abs_traj: pytorch tensor of shape (batch, seq_len, 2)
     """
-    # batch, seq_len, 2
     displacement = torch.cumsum(rel_traj, dim=1)
     start_pos = torch.unsqueeze(start_pos, dim=1)
     abs_traj = displacement + start_pos
     return abs_traj
 
-
-
-def l2_loss(pred_traj, pred_traj_gt, loss_mask, random=0, mode='average'):
-    """
-    Input:
-    - pred_traj: Tensor of shape (seq_len, batch, 2). Predicted trajectory.
-    - pred_traj_gt: Tensor of shape (seq_len, batch, 2). Groud truth
-    predictions.
-    - loss_mask: Tensor of shape (batch, seq_len)
-    - mode: Can be one of sum, average, raw
-    Output:
-    - loss: l2 loss depending on mode
-    """
-    loss = (loss_mask.unsqueeze(dim=2) *
-            (pred_traj_gt.squeeze(dim=1) - pred_traj)**2)
+def l2_loss(pred_traj, pred_traj_gt, loss_mask, mode='average'):
+    # pred_traj: (B, L, 2), pred_traj_gt: (B, 1, L, 2)
+    gt = pred_traj_gt.squeeze(1)
+    loss = (loss_mask.unsqueeze(dim=2) * (gt - pred_traj)**2)
     if mode == 'sum':
         return torch.sum(loss)
     elif mode == 'average':
@@ -56,201 +31,105 @@ def l2_loss(pred_traj, pred_traj_gt, loss_mask, random=0, mode='average'):
     elif mode == 'raw':
         return loss.sum(dim=2).sum(dim=1)
 
-def rmse(pred_traj, pred_traj_gt, consider_ped=None, mode='raw'):
-    """
-    Input:
-    - pred_traj: Tensor of shape (seq_len, batch, 2). Predicted trajectory.
-    - pred_traj_gt: Tensor of shape (seq_len, batch, 2). Ground truth
-    predictions.
-    - consider_ped: Tensor of shape (batch)
-    - mode: Can be one of sum, raw
-    Output:
-    - loss: gives the eculidian displacement error
-    """
-    loss = (pred_traj_gt.squeeze(dim=1) - pred_traj)**2
-    if consider_ped is not None:
-        loss = (torch.sqrt(loss.sum(dim=2)).sum(dim=0) * consider_ped)/loss.shape[0]
-    else:
-        loss = (torch.sqrt(loss.sum(dim=2)).sum(dim=0))/loss.shape[0]
+def rmse(pred_traj, pred_traj_gt, mode='raw'):
+    # pred_traj: (B, L, 2), pred_traj_gt: (B, 1, L, 2)
+    gt = pred_traj_gt.squeeze(1)
+    loss = (gt - pred_traj)**2
+    # Returns (L,) averaged over batch
+    return torch.sqrt(loss.sum(dim=2).mean(dim=0))
+
+def displacement_error(pred_traj, pred_traj_gt, mode='sum'):
+    gt = pred_traj_gt.squeeze(1)
+    loss = (gt - pred_traj)**2
+    # Sum of distances over time for each agent
+    dist = torch.sqrt(loss.sum(dim=2)).sum(dim=1)
     if mode == 'sum':
-        return torch.sum(loss)
-    elif mode == 'raw':
-        return loss
+        return torch.sum(dist)
+    return dist
 
-def horiz_eval(loss_total, n_horiz):
-    loss_total = loss_total.cpu().numpy()
-    avg_res = np.zeros(n_horiz)
-    n_all = loss_total.shape[0]
-    n_frames = n_all//n_horiz
-    for i in range(n_horiz):
-        if i == 0:
-            st_id = 0
-        else:
-            st_id = n_frames*i
-
-        if i == n_horiz-1:
-            en_id = n_all-1
-        else:
-            en_id = n_frames*i + n_frames - 1
-
-        avg_res[i] = np.mean(loss_total[st_id:en_id+1])
-
-    return avg_res
-
-
-def displacement_error(pred_traj, pred_traj_gt, consider_ped=None, mode='sum'):
-    """
-    Input:
-    - pred_traj: Tensor of shape (seq_len, batch, 2). Predicted trajectory.
-    - pred_traj_gt: Tensor of shape (seq_len, batch, 2). Ground truth
-    predictions.
-    - consider_ped: Tensor of shape (batch)
-    - mode: Can be one of sum, raw
-    Output:
-    - loss: gives the eculidian displacement error
-    """
-    loss = (pred_traj_gt.squeeze(dim=1) - pred_traj)**2
-    if consider_ped is not None:
-        loss = torch.sqrt(loss.sum(dim=2)).sum(dim=1) * consider_ped
-    else:
-        loss = torch.sqrt(loss.sum(dim=2)).sum(dim=1)
+def final_displacement_error(pred_pos, pred_pos_gt, mode='sum'):
+    # pred_pos: (B, 2), pred_pos_gt: (B, 2)
+    dist = torch.sqrt(torch.sum((pred_pos_gt - pred_pos)**2, dim=1))
     if mode == 'sum':
-        return torch.sum(loss)
-    elif mode == 'raw':
-        return loss
+        return torch.sum(dist)
+    return dist
 
-def final_displacement_error(pred_pos, pred_pos_gt, consider_ped=None, mode='sum'):
-    """
-    Input:
-    - pred_pos: Tensor of shape (batch, 2). Predicted last pos.
-    - pred_pos_gt: Tensor of shape (seq_len, batch, 2). Groud truth
-    last pos
-    - consider_ped: Tensor of shape (batch)
-    Output:
-    - loss: gives the eculidian displacement error
-    """
-    loss = pred_pos_gt - pred_pos
-    loss = loss**2
-    if consider_ped is not None:
-        loss = torch.sqrt(loss.sum(dim=1)) * consider_ped
-    else:
-        loss = torch.sqrt(loss.sum(dim=1))
-    if mode == 'raw':
-        return loss
-    else:
-        return torch.sum(loss)
-
-def getGraphDataList(obs_traj, obs_traj_rel, seq_start_end):
+def getGraphDataList(obs_traj, obs_traj_rel, seq_start_end, relation_neighbor_limit_meter=None):
     data_list = []
     for (start, end) in seq_start_end:
         x1=obs_traj[start:end,:,:,:].reshape(end-start, int(obs_traj.shape[2]*obs_traj.shape[3]))
         x2=obs_traj_rel[start:end,:,:,:].reshape(end-start, int(obs_traj_rel.shape[2]*obs_traj_rel.shape[3]))
         x = torch.cat((x1,x2),dim=1)
-
         NUM_NODES = x.shape[0]
-        num_edges = int((NUM_NODES*(NUM_NODES-1)))
-
-        edges_per_node = int(num_edges/NUM_NODES)
-        edge_list1 = []
-        edge_list2 = []
-        nodeList = [node for node in range(0,NUM_NODES)]
-        for n in range(0,NUM_NODES):
-            for e in range(0,edges_per_node):
-                edge_list1.append(n)
-            for k in nodeList:
-                if(k != n):
-                    edge_list2.append(k)
-
-        edge_index = torch.tensor([edge_list1,
-                                edge_list2], dtype=torch.long)
-    
-        data = Data(x=x, edge_index=edge_index, num_nodes=NUM_NODES)
-        data_list.append(data)
+        if relation_neighbor_limit_meter is None:
+            edge_list1, edge_list2 = [], []
+            for n in range(NUM_NODES):
+                for k in range(NUM_NODES):
+                    if k != n:
+                        edge_list1.append(n); edge_list2.append(k)
+            edge_index = torch.tensor([edge_list1, edge_list2], dtype=torch.long)
+        else:
+            last_pos = obs_traj[start:end, 0, -1, :]
+            pos_np = last_pos.detach().cpu().numpy()
+            tree = cKDTree(pos_np)
+            src_list, dst_list = [], []
+            for i in range(NUM_NODES):
+                neighbors = tree.query_ball_point(pos_np[i], r=relation_neighbor_limit_meter)
+                for j in neighbors:
+                    if j != i:
+                        src_list.append(i); dst_list.append(j)
+            edge_index = torch.tensor([src_list, dst_list], dtype=torch.long) if src_list else torch.empty((2, 0), dtype=torch.long)
+        data_list.append(Data(x=x, edge_index=edge_index.to(obs_traj.device), num_nodes=NUM_NODES))
     return data_list
 
-def train(model, train_loader, optimizer, device, obs_step):
+def train(model, train_loader, optimizer, device, obs_step, relation_neighbor_limit_meter=None, output_type='mlp', use_chunked=False):
     losses = []
     model.train()
+    chunk_size = getattr(model, 'chunk_size', 5)
     for batch in tqdm(train_loader):
         batch = [tensor.to(device) for tensor in batch]
-        (obs_traj, pred_traj_gt, obs_traj_rel, pred_traj_gt_rel,
-            non_linear_ped, loss_mask, seq_start_end, _ ) = batch
+        (obs_traj, pred_traj_gt, obs_traj_rel, pred_traj_gt_rel, _, loss_mask, seq_start_end, _ ) = batch
         optimizer.zero_grad()
-        # obs_traj = obs_traj/1000
-        # pred_traj_gt = pred_traj_gt/1000
-        # obs_traj_rel = obs_traj_rel/1000
-        # pred_traj_gt_rel  = pred_traj_gt_rel/1000
-        tgt = torch.cat((pred_traj_gt, pred_traj_gt_rel), dim=1).view(pred_traj_gt.shape[0], pred_traj_gt.shape[2], -1)
         
-        data_list = getGraphDataList(obs_traj,obs_traj_rel, seq_start_end)
-        graph_batch = tgb.from_data_list(data_list)
-
-        pred_traj = model(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), tgt.to(device))
+        start_pos = obs_traj[:, :, -1, :].squeeze(1)
+        if use_chunked:
+            pred_flat = pred_traj_gt.squeeze(1); pred_rel_flat = pred_traj_gt_rel.squeeze(1)
+            num_chunks = pred_flat.size(1) // chunk_size
+            tgt = torch.cat([pred_flat, pred_rel_flat], dim=-1).view(pred_flat.size(0), num_chunks, chunk_size, 4)
+        else:
+            tgt = torch.cat((pred_traj_gt, pred_traj_gt_rel), dim=1).view(pred_traj_gt.size(0), pred_traj_gt.size(2), -1)
         
-        # pred_traj = pred_traj[:, :-1, :2]
-        pred_traj = pred_traj[:, :-1, :]
-        pred_traj = pred_traj.reshape(pred_traj.shape[0],train_loader.dataset.pred_len,2)
-        pred_traj_real = relative_to_abs(pred_traj, obs_traj[:,:,-1,:].squeeze(1))
+        graph_batch = tgb.from_data_list(getGraphDataList(obs_traj, obs_traj_rel, seq_start_end, relation_neighbor_limit_meter))
+        pred_traj = model(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), tgt.to(device), start_pos=start_pos)
         
-        # pred_traj = pred_traj.reshape(pred_traj.shape[0],train_loader.dataset.pred_len,2)
-
-        # pred_traj_real = relative_to_abs(pred_traj, obs_traj[:,:,-1,:].squeeze(1))
-
-        loss_mask = loss_mask[:, obs_step:]
-        loss = l2_loss(pred_traj_real, pred_traj_gt, loss_mask, mode='average')
-        # loss = l2_loss(pred_traj.view(pred_traj_gt.shape), pred_traj_gt, loss_mask, mode='average')
+        # All models now output relative dx, dy (B, L, 2)
+        pred_traj_real = relative_to_abs(pred_traj, start_pos)
+        
+        loss = l2_loss(pred_traj_real, pred_traj_gt, loss_mask[:, obs_step:], mode='average')
         losses.append(loss.item())
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 5)
         optimizer.step()
     return losses
 
-def test(model, test_loader, device, obs_step):
+def test(model, test_loader, device, obs_step, relation_neighbor_limit_meter=None, output_type='mlp', use_chunked=False):
     total_traj = 0
     ade_batches, fde_batches = [], []
-    losses = []
     model.eval()
-    print("-Test-")
     for batch in tqdm(test_loader):
-        # print(f"----------Epoch #{epoch}----------")
         batch = [tensor.to(device) for tensor in batch]
-        (obs_traj, pred_traj_gt, obs_traj_rel, pred_traj_gt_rel,
-            non_linear_ped, loss_mask, seq_start_end, _) = batch
+        (obs_traj, pred_traj_gt, obs_traj_rel, _, _, loss_mask, seq_start_end, _) = batch
         total_traj += pred_traj_gt.size(0)
-        # obs_traj = obs_traj/1000
-        # pred_traj_gt = pred_traj_gt/1000
-        # obs_traj_rel = obs_traj_rel/1000
-        # pred_traj_gt_rel  = pred_traj_gt_rel/1000
-
-        data_list = getGraphDataList(obs_traj,obs_traj_rel, seq_start_end)
-        graph_batch = tgb.from_data_list(data_list)       
+        start_pos = obs_traj[:, :, -1, :].squeeze(1)
         
-        pred_traj = model.infer(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), seq_len=test_loader.dataset.pred_len)
+        graph_batch = tgb.from_data_list(getGraphDataList(obs_traj, obs_traj_rel, seq_start_end, relation_neighbor_limit_meter))
+        pred_traj = model.infer(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), seq_len=test_loader.dataset.pred_len, start_pos=start_pos)
         
-        # pred_traj = pred_traj[:, :, :2].view(pred_traj_gt.shape)
+        pred_traj_real = relative_to_abs(pred_traj, start_pos)
         
-        pred_traj = pred_traj[:, :, :]
-        pred_traj = pred_traj.reshape(pred_traj.shape[0],test_loader.dataset.pred_len,2)
-        pred_traj_real = relative_to_abs(pred_traj, obs_traj[:,:,-1,:].squeeze(1))
+        ade_batches.append(displacement_error(pred_traj_real, pred_traj_gt, mode='sum').item())
+        fde_batches.append(final_displacement_error(pred_traj_real[:,-1,:], pred_traj_gt[:,:,-1,:].squeeze(1), mode='sum').item())
         
-        loss_mask = loss_mask[:, obs_step:]
-        loss = l2_loss(pred_traj_real, pred_traj_gt, loss_mask, mode='average')
-        losses.append(loss.item())
-        
-        # obs_traj = obs_traj*1000
-        # pred_traj_gt = pred_traj_gt*1000
-        # obs_traj_rel = obs_traj_rel*1000
-        # pred_traj_gt_rel  = pred_traj_gt_rel*1000
-        # pred_traj = pred_traj*1000
-        # pred_traj = model(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device))
-        # pred_traj = pred_traj.reshape(pred_traj.shape[0],test_loader.dataset.pred_len,2).detach()
-
-        # pred_traj_real = relative_to_abs(pred_traj, obs_traj[:,:,-1,:].squeeze(1))
-
-        # ade_batches.append(torch.sum(displacement_error(pred_traj, pred_traj_gt, mode='raw')).detach().item())
-        # fde_batches.append(torch.sum(final_displacement_error(pred_traj[:,:,-1,:], pred_traj_gt[:,:,-1,:].squeeze(1), mode='raw')).detach().item())
-        ade_batches.append(torch.sum(displacement_error(pred_traj_real, pred_traj_gt, mode='raw')).detach().item())
-        fde_batches.append(torch.sum(final_displacement_error(pred_traj_real[:,-1,:], pred_traj_gt[:,:,-1,:].squeeze(1), mode='raw')).detach().item())
     ade = sum(ade_batches) / (total_traj * test_loader.dataset.pred_len)
-    fde = sum(fde_batches) / (total_traj)
-    return ade, fde, losses
+    fde = sum(fde_batches) / total_traj
+    return ade, fde, []
