@@ -9,10 +9,10 @@ cluster 대신 로컬에서 실행할 때 사용합니다. 결과 형식은 clus
 ./scripts/run_local.sh
 
 # preset config 지정
-./scripts/run_local.sh configs/pedestrian/local/train_original_10m.yaml
-./scripts/run_local.sh configs/pedestrian/local/inference_original_10m.yaml
-./scripts/run_local.sh configs/pedestrian/local/train_kan_15m.yaml
-./scripts/run_local.sh configs/pedestrian/local/inference_kan_15m.yaml
+./scripts/run_local.sh configs/pedestrian/train_pedestrian_original_10m_aug.yaml
+./scripts/run_local.sh configs/pedestrian/inference_pedestrian_original_10m_aug.yaml
+./scripts/run_local.sh configs/pedestrian/train_pedestrian_kan_15m_aug.yaml
+./scripts/run_local.sh configs/pedestrian/inference_pedestrian_kan_15m_aug.yaml
 ```
 
 ## 출력 형식 (cluster와 동일)
@@ -32,14 +32,14 @@ Method | 1.2s | 2.4s | 3.6s | 4.8s | ADE | FDE | Params(K)
 
 | Config | 설명 |
 |--------|------|
-| train_original_10m | Original 10m 학습 |
-| inference_original_10m | Original 10m inference (train_original_10m_v2 필요) |
-| train_kan_10m | KAN 10m 학습 |
-| inference_kan_10m | KAN 10m inference (train_kan_10m_v1 필요) |
-| train_kan_15m | KAN 15m 학습 |
-| inference_kan_15m | KAN 15m inference (train_kan_15m_v1 필요) |
-| train_mamba_10m | Mamba 10m 학습 |
-| inference_mamba_10m | Mamba 10m inference (train_mamba_10m_v1 필요) |
+| train_pedestrian_original_10m_aug | Pedestrian Original 10m 학습 (Aug, Best) |
+| inference_pedestrian_original_10m_aug | Pedestrian Original 10m inference |
+| train_pedestrian_kan_10m_aug | Pedestrian KAN 10m 학습 |
+| inference_pedestrian_kan_10m_aug | Pedestrian KAN 10m inference |
+| train_pedestrian_kan_15m_aug | Pedestrian KAN 15m 학습 |
+| inference_pedestrian_kan_15m_aug | Pedestrian KAN 15m inference |
+| train_pedestrian_mamba_10m_aug | Pedestrian Mamba 10m 학습 |
+| inference_pedestrian_mamba_10m_aug | Pedestrian Mamba 10m inference |
 
 ## 전체 벤치마크 (4개 모델 train + inference)
 

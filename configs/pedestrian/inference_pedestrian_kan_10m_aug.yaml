@@ -1,4 +1,4 @@
-# Local: Inference original VT-Former, 10m filter (uses train_original_10m_v2)
+# Pedestrian: Inference KAN VT-Former (10M filter + Aug)
 input_data:
   dataset: ['eth', 'hotel', 'univ', 'zara1', 'zara2']
   subject: 'pedestrian'
@@ -22,8 +22,8 @@ training:
   milestones: [10, 30, 45]
   epoches: 20
   experiment_root: 'experiments/pedestrian'
-  run_name: 'inference_original_10m_v2'
-  selected_model: 'original'
+  run_name: 'inference_kan_10m_v1'
+  selected_model: 'kan_best'
 
   model_profiles:
     original:
@@ -38,7 +38,7 @@ training:
     kan_best:
       backbone: 'transformer'
       output_type: 'kan'
-      model_dir: 'experiments/pedestrian/train/train_kan_15m_v1'
+      model_dir: 'experiments/pedestrian/train/train_kan_10m_v1'
       learning_rate: 0.01
       num_heads: 2
       num_layers: 2

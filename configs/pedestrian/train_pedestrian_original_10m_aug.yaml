@@ -1,4 +1,4 @@
-# Local: Train Mamba VT-Former, 10m filter
+# Pedestrian: Original VT-Former (10M filter + Aug) — Best
 input_data:
   dataset: ['eth', 'hotel', 'univ', 'zara1', 'zara2']
   subject: 'pedestrian'
@@ -23,8 +23,8 @@ training:
   milestones: [10, 30, 45]
   epoches: 20
   experiment_root: 'experiments/pedestrian'
-  run_name: 'train_mamba_10m_v1'
-  selected_model: 'mamba'
+  run_name: 'train_original_10m_v2'
+  selected_model: 'original'
 
   model_profiles:
     original:
@@ -48,7 +48,7 @@ training:
     mamba:
       backbone: 'mamba'
       output_type: 'mlp'
-      model_dir: 'experiments/pedestrian/train/train_mamba_10m_v1'
+      model_dir: 'models/pb/2026-02-15_17-39-19'
       learning_rate: 0.01
       num_heads: 2
       num_layers: 2

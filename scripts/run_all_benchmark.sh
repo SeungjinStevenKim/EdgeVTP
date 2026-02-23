@@ -12,7 +12,7 @@ set -e
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_DIR"
 
-CONFIGS_DIR="configs/pedestrian/local"
+CONFIGS_DIR="configs/pedestrian"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 LOG_FILE="experiments/pedestrian/slurm/benchmark_all_${TIMESTAMP}.out"
 mkdir -p experiments/pedestrian/slurm
@@ -38,40 +38,40 @@ echo ""
 echo "========== PHASE 1: TRAINING =========="
 
 echo ""
-echo ">>> 1/4 Train Original VT-Former 10m"
-python main.py --config "$CONFIGS_DIR/train_original_10m.yaml"
+echo ">>> 1/4 Train Pedestrian Original VT-Former 10m (Aug)"
+python main.py --config "$CONFIGS_DIR/train_pedestrian_original_10m_aug.yaml"
 
 echo ""
-echo ">>> 2/4 Train KAN VT-Former 10m"
-python main.py --config "$CONFIGS_DIR/train_kan_10m.yaml"
+echo ">>> 2/4 Train Pedestrian KAN VT-Former 10m (Aug)"
+python main.py --config "$CONFIGS_DIR/train_pedestrian_kan_10m_aug.yaml"
 
 echo ""
-echo ">>> 3/4 Train KAN VT-Former 15m"
-python main.py --config "$CONFIGS_DIR/train_kan_15m.yaml"
+echo ">>> 3/4 Train Pedestrian KAN VT-Former 15m (Aug)"
+python main.py --config "$CONFIGS_DIR/train_pedestrian_kan_15m_aug.yaml"
 
 echo ""
-echo ">>> 4/4 Train Mamba VT-Former 10m"
-python main.py --config "$CONFIGS_DIR/train_mamba_10m.yaml"
+echo ">>> 4/4 Train Pedestrian Mamba VT-Former 10m (Aug)"
+python main.py --config "$CONFIGS_DIR/train_pedestrian_mamba_10m_aug.yaml"
 
 # --- INFERENCE ---
 echo ""
 echo "========== PHASE 2: INFERENCE =========="
 
 echo ""
-echo ">>> 1/4 Inference Original VT-Former 10m"
-python main.py --config "$CONFIGS_DIR/inference_original_10m.yaml"
+echo ">>> 1/4 Inference Pedestrian Original VT-Former 10m (Aug)"
+python main.py --config "$CONFIGS_DIR/inference_pedestrian_original_10m_aug.yaml"
 
 echo ""
-echo ">>> 2/4 Inference KAN VT-Former 10m"
-python main.py --config "$CONFIGS_DIR/inference_kan_10m.yaml"
+echo ">>> 2/4 Inference Pedestrian KAN VT-Former 10m (Aug)"
+python main.py --config "$CONFIGS_DIR/inference_pedestrian_kan_10m_aug.yaml"
 
 echo ""
-echo ">>> 3/4 Inference KAN VT-Former 15m"
-python main.py --config "$CONFIGS_DIR/inference_kan_15m.yaml"
+echo ">>> 3/4 Inference Pedestrian KAN VT-Former 15m (Aug)"
+python main.py --config "$CONFIGS_DIR/inference_pedestrian_kan_15m_aug.yaml"
 
 echo ""
-echo ">>> 4/4 Inference Mamba VT-Former 10m"
-python main.py --config "$CONFIGS_DIR/inference_mamba_10m.yaml"
+echo ">>> 4/4 Inference Pedestrian Mamba VT-Former 10m (Aug)"
+python main.py --config "$CONFIGS_DIR/inference_pedestrian_mamba_10m_aug.yaml"
 
 echo ""
 echo "=============================================="
