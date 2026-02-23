@@ -1,52 +1,52 @@
-# Pishgu: Universal Path Prediction Network Architecture for Real-time Cyber-physical Edge Systems
+# VT-Former
 
-[![arXiv](https://img.shields.io/badge/arXiv-<2210.08057>-<COLOR>.svg)](https://arxiv.org/abs/2210.08057)
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/pishgu-universal-path-prediction-architecture/trajectory-prediction-on-actev)](https://paperswithcode.com/sota/trajectory-prediction-on-actev?p=pishgu-universal-path-prediction-architecture)
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/pishgu-universal-path-prediction-architecture/trajectory-prediction-on-ngsim)](https://paperswithcode.com/sota/trajectory-prediction-on-ngsim?p=pishgu-universal-path-prediction-architecture)
+Vehicle trajectory prediction model with Original VT-Former, Bezier VT-Former, and KAN VT-Former variants.
 
-This repo contains the official Pytorch implementation of paper ["Pishgu: : Universal Path Prediction Network Architecture for Real-time Cyber-physical Edge Systems"](https://arxiv.org/pdf/2210.08057.pdf) accepted to be published and presented at [IEEE/ACM ICCPS 2023](https://iccps.acm.org/2023/). We present a universal architecture for trajectory prediction for pedestrians and vehicles from various points of view specifically designed for CPS applications. Pishgu is lightweight and captures the interdependencies between subjects using Graph Isomorphism Network (GIN). Morevover, by utilizing attentive convolutional layers, Pishgu is able to focus on more informative features and define a novel approach for trajectory prediction. 
+## Installation
 
-![Pishgu Architecture](model.png)
-## Domains and Datasets
-- Vehicle Bird's-eye View: NGSIM Dataset
-- Pedestrian Bird's-eye View: UCY and ETH Datasets
-- Pedestrian High-angle View: VIRAT/ActEV Dataset
+### Option 1: Conda (recommended)
 
-You can download the preprocessed data from this [link](https://drive.google.com/file/d/1BnhGtGgiafV6LP9rnIJA6b5Lp4GxmPeB/view?usp=share_link). 
-
-## Installation 
 ```bash
-git clone https://github.com/TeCSAR-UNCC/Pishgu.git
-cd Pishgu
-pip install -r requirments.txt
+# Create environment
+conda create -n vt_former python=3.8 -y
+conda activate vt_former
+
+# Install PyTorch (CUDA 11.6 - adjust for your system: https://pytorch.org/get-started/locally/)
+pip install torch==1.12.0+cu116 torchvision==0.13.0+cu116 torchaudio==0.12.0+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
+
+# Install PyTorch Geometric and dependencies
+pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-1.12.0+cu116.html
+pip install torch-geometric==2.0.4
+
+# Install remaining requirements
+pip install -r requirements.txt
 ```
 
-## Training and Testing
-Each domain has a corresponding Config file in configs folder. For training and saving the model in the Training section just set the "save_model" and "train" fields to True and use the following command:
+### Option 2: environment.yml (from working env)
+
 ```bash
-python3 main.py --config {path_to_the_config_file}
+conda env create -f environment.yml
+conda activate vt_former
 ```
 
-For testing, just give the path to desired model in the config file and set "save_model" and "train" fields to False and use the same command:
+### Option 3: requirements.txt only
+
 ```bash
-python3 main.py --config {path_to_the_config_file}
+pip install -r requirements.txt
 ```
 
-We also provide the trained weights in all domains in the the "model" folder. 
+Note: `torch==1.12.0+cu116` may fail with plain `pip install`. Install PyTorch first from [pytorch.org](https://pytorch.org) for your CUDA version, then run `pip install -r requirements.txt`.
 
-## Citation
-If you found Pishgu helpful and used it in your research, please use the folllowing BibTeX entry:
+## Quick Start
+
+```bash
+# Training
+python main.py --config configs/ngsim/train_ngsim_30m_oneshot_bezier_80ep.yaml
+
+# Inference
+python main.py --config configs/ngsim/inference_ngsim_30m_oneshot_bezier_80ep.yaml
 ```
-@article{noghre2022pishgu,
-  title={Pishgu: Universal Path Prediction Architecture through Graph Isomorphism and Attentive Convolution},
-  author={Noghre, Ghazal Alinezhad and Katariya, Vinit and Pazho, Armin Danesh and Neff, Christopher and Tabkhi, Hamed},
-  journal={arXiv preprint arXiv:2210.08057},
-  year={2022}
-}
-```
-## Refrences
 
-This repo is based on these awesome works:
-- [CARPe_Posterum](https://github.com/TeCSAR-UNCC/CARPe_Posterum)
-- [Social GAN](https://github.com/agrimgupta92/sgan)
+## Dataset
 
+Download NGSIM preprocessed data and place in `datasets/ngsim/` (see project documentation for links).
