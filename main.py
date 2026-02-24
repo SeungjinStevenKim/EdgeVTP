@@ -224,7 +224,10 @@ else:
                 use_chunked = config['training'].get('use_chunked', False)
                 start_pos = obs_traj[:, :, -1, :].squeeze(1) if (output_type == 'bezier' or output_type == 'one_shot_bezier' or use_chunked) else None
                 start = time.time()
-                pred_traj = model.infer(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), seq_len=test_loader.dataset.pred_len, edge_weight=edge_weight, start_pos=start_pos)
+                if getattr(model, 'use_residual_separation', False):
+                    pred_traj = model.infer(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), seq_len=test_loader.dataset.pred_len, edge_weight=edge_weight, start_pos=start_pos, x_cx=graph_batch.x_cx.to(device), x_delta=graph_batch.x_delta.to(device))
+                else:
+                    pred_traj = model.infer(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), seq_len=test_loader.dataset.pred_len, edge_weight=edge_weight, start_pos=start_pos)
                 end = time.time()
                 times.append(end-start)
 

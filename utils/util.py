@@ -79,7 +79,7 @@ def getGraphDataList(obs_traj, obs_traj_rel, seq_start_end, relation_neighbor_li
                     if j != i:
                         src_list.append(i); dst_list.append(j)
             edge_index = torch.tensor([src_list, dst_list], dtype=torch.long) if src_list else torch.empty((2, 0), dtype=torch.long)
-        data_list.append(Data(x=x, edge_index=edge_index.to(obs_traj.device), num_nodes=NUM_NODES))
+        data_list.append(Data(x=x, x_cx=x1, x_delta=x2, edge_index=edge_index.to(obs_traj.device), num_nodes=NUM_NODES))
     return data_list
 
 def train(model, train_loader, optimizer, device, obs_step, relation_neighbor_limit_meter=None, output_type='mlp', use_chunked=False):
@@ -100,7 +100,10 @@ def train(model, train_loader, optimizer, device, obs_step, relation_neighbor_li
             tgt = torch.cat((pred_traj_gt, pred_traj_gt_rel), dim=1).view(pred_traj_gt.size(0), pred_traj_gt.size(2), -1)
         
         graph_batch = tgb.from_data_list(getGraphDataList(obs_traj, obs_traj_rel, seq_start_end, relation_neighbor_limit_meter))
-        pred_traj = model(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), tgt.to(device), start_pos=start_pos)
+        if getattr(model, 'use_residual_separation', False):
+            pred_traj = model(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), tgt.to(device), start_pos=start_pos, x_cx=graph_batch.x_cx.to(device), x_delta=graph_batch.x_delta.to(device))
+        else:
+            pred_traj = model(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), tgt.to(device), start_pos=start_pos)
         
         # All models now output relative dx, dy (B, L, 2)
         pred_traj_real = relative_to_abs(pred_traj, start_pos)
@@ -123,7 +126,10 @@ def test(model, test_loader, device, obs_step, relation_neighbor_limit_meter=Non
         start_pos = obs_traj[:, :, -1, :].squeeze(1)
         
         graph_batch = tgb.from_data_list(getGraphDataList(obs_traj, obs_traj_rel, seq_start_end, relation_neighbor_limit_meter))
-        pred_traj = model.infer(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), seq_len=test_loader.dataset.pred_len, start_pos=start_pos)
+        if getattr(model, 'use_residual_separation', False):
+            pred_traj = model.infer(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), seq_len=test_loader.dataset.pred_len, start_pos=start_pos, x_cx=graph_batch.x_cx.to(device), x_delta=graph_batch.x_delta.to(device))
+        else:
+            pred_traj = model.infer(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device), seq_len=test_loader.dataset.pred_len, start_pos=start_pos)
         
         pred_traj_real = relative_to_abs(pred_traj, start_pos)
         

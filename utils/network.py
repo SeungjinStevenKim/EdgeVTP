@@ -192,6 +192,22 @@ class GINN3_ve(torch.nn.Module):
         return x
 
 
+class GINN_residual(torch.nn.Module):
+    """For residual separation branches: in_dim -> mid -> in_dim (keeps dim)."""
+    def __init__(self, in_dim):
+        super(GINN_residual, self).__init__()
+        mid = max(in_dim // 2, 8)
+        self.l1 = torch.nn.Linear(in_dim, mid)
+        self.l2 = torch.nn.Linear(mid, in_dim)
+        torch.nn.init.xavier_uniform_(self.l1.weight, gain=torch.nn.init.calculate_gain('leaky_relu'))
+        torch.nn.init.xavier_uniform_(self.l2.weight, gain=torch.nn.init.calculate_gain('leaky_relu'))
+
+    def forward(self, x):
+        x = F.leaky_relu(self.l1(x))
+        x = F.leaky_relu(self.l2(x))
+        return x
+
+
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, max_len=1000):
         super(PositionalEncoding, self).__init__()
@@ -564,7 +580,8 @@ class NetGINConv(torch.nn.Module):
                 output = self.kan_output(output)
             else:
                 output = self.output_layer(output)
-        return output
+        # Decoder output: pos i predicts step i+1. Drop last (predicts step 13). Keep [0:12].
+        return output[:, :-1, :]
     
     def infer(self, x, x_real, edge_index, seq_len=12, edge_weight=None):
         x1 = F.leaky_relu(self.fc(x_real))
@@ -630,6 +647,21 @@ class NetGINConv_ve(torch.nn.Module):
         nn = GINN_ve(config)
         nn2 = GINN3_ve(config)
         self.conv1 = GINConv(nn, nn2, train_eps=True)
+
+        self.use_residual_separation = config['training'].get('use_residual_separation', False)
+        if self.use_residual_separation:
+            branch_dim = int(num_features * 2)  # 32 for pedestrian, 60 for NGSIM
+            conv1_out_dim = config['input_data']['observed_steps'] * 2  # same as num_features
+            self.fc_cx = torch.nn.Linear(num_features, branch_dim)
+            self.fc_delta = torch.nn.Linear(num_features, branch_dim)
+            self.conv_cx = GINConv(GINN_residual(branch_dim), GINN_residual(branch_dim), train_eps=True)
+            self.conv_delta = GINConv(GINN_residual(branch_dim), GINN_residual(branch_dim), train_eps=True)
+            self.proj_cx = torch.nn.Linear(branch_dim, conv1_out_dim)
+            self.proj_delta = torch.nn.Linear(branch_dim, conv1_out_dim)
+            self.alpha = torch.nn.Parameter(torch.tensor(0.1))
+            self.beta = torch.nn.Parameter(torch.tensor(0.1))
+            torch.nn.init.xavier_uniform_(self.fc_cx.weight, gain=torch.nn.init.calculate_gain('leaky_relu'))
+            torch.nn.init.xavier_uniform_(self.fc_delta.weight, gain=torch.nn.init.calculate_gain('leaky_relu'))
 
         input_ch = output_ch
         output_ch = output_size
@@ -723,9 +755,15 @@ class NetGINConv_ve(torch.nn.Module):
             start_token = prev_embed[:, -1:, :]
         return torch.cat(all_pred, dim=1)
 
-    def forward(self, x, x_real, edge_index, tgt, edge_weight=None, start_pos=None):
+    def forward(self, x, x_real, edge_index, tgt, edge_weight=None, start_pos=None, x_cx=None, x_delta=None):
         x1 = F.leaky_relu(self.fc(x_real))
         x1 = F.leaky_relu(self.conv1(x1, edge_index, edge_weight))
+        if self.use_residual_separation and x_cx is not None and x_delta is not None:
+            h_cx = F.leaky_relu(self.fc_cx(x_cx))
+            h_cx = F.leaky_relu(self.conv_cx(h_cx, edge_index, edge_weight))
+            h_delta = F.leaky_relu(self.fc_delta(x_delta))
+            h_delta = F.leaky_relu(self.conv_delta(h_delta, edge_index, edge_weight))
+            x1 = x1 + self.alpha * self.proj_cx(h_cx) + self.beta * self.proj_delta(h_delta)
         x1 = x1.reshape(x.shape)
         x = torch.cat((x,x1),1)
         x = x.view(x.shape[0], self.config['input_data']['observed_steps'], -1)
@@ -762,12 +800,21 @@ class NetGINConv_ve(torch.nn.Module):
             output = self.decoder.forward(tgt, x, tgt_mask=self.create_tgt_mask(tgt.size(1)))
         output = self.output_norm(output)
         if self.output_type == 'kan':
-            return self.kan_output(output)
-        return self.output_layer(output)
+            output = self.kan_output(output)
+        else:
+            output = self.output_layer(output)
+        # Decoder output: pos i predicts step i+1. Drop last (predicts step 13). Keep [0:12].
+        return output[:, :-1, :]
     
-    def infer(self, x, x_real, edge_index, seq_len=12, edge_weight=None, start_pos=None):
+    def infer(self, x, x_real, edge_index, seq_len=12, edge_weight=None, start_pos=None, x_cx=None, x_delta=None):
         x1 = F.leaky_relu(self.fc(x_real))
         x1 = F.leaky_relu(self.conv1(x1, edge_index, edge_weight))
+        if self.use_residual_separation and x_cx is not None and x_delta is not None:
+            h_cx = F.leaky_relu(self.fc_cx(x_cx))
+            h_cx = F.leaky_relu(self.conv_cx(h_cx, edge_index, edge_weight))
+            h_delta = F.leaky_relu(self.fc_delta(x_delta))
+            h_delta = F.leaky_relu(self.conv_delta(h_delta, edge_index, edge_weight))
+            x1 = x1 + self.alpha * self.proj_cx(h_cx) + self.beta * self.proj_delta(h_delta)
         x1 = x1.reshape(x.shape)
         x = torch.cat((x,x1),1)
         x = x.view(x.shape[0], self.config['input_data']['observed_steps'], -1)
