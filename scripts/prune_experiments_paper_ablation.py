@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Remove experiments/vehicle run folders not needed for paper Table 7 NGSIM grid + CHD Carolinas.
+"""Remove experiment folders not needed for paper Table 7 NGSIM grid + CHD Carolinas.
 
-Keeps:
+Keeps under experiments/vehicle:
 - train/inference: ngsim {20m,30m,40m} × k{8,12,16} × (bezier-only | residual_v2_tcn_5hz)
-- train/inference: names starting with train_carolinas_ / inference_carolinas_
+- inference: every inference_carolinas_*
+- train: train_carolinas_* only if paired with an inference folder (same run stem; inference …_k16_5hz → train …_k16)
 
-Deletes everything else under experiments/vehicle (including highd_l40s, benchmark_*, _v2, 35m, etc.).
+Also removes experiments/pedestrian/ (ETH/UCY etc.; not in the vehicle paper).
+
+Deletes everything else under experiments/vehicle (highd_l40s, orphan train-only Carolinas K sweeps, etc.).
 """
 from __future__ import annotations
 
@@ -40,17 +43,28 @@ def ngsim_ablation_dirs() -> set[Path]:
     return out
 
 
+def carolinas_train_from_inference(inference_run_name: str) -> str:
+    """Map inference_carolinas_* folder name to paired train_carolinas_* (inference k16_5hz -> train k16)."""
+    s = inference_run_name.replace("inference_", "train_", 1)
+    if s.endswith("_5hz"):
+        s = s[: -len("_5hz")]
+    return s
+
+
 def carolinas_dirs() -> set[Path]:
     out: set[Path] = set()
-    for base in (TRAIN, INF):
-        if not base.is_dir():
-            continue
-        for p in base.iterdir():
-            if p.is_dir() and (
-                p.name.startswith("train_carolinas_")
-                or p.name.startswith("inference_carolinas_")
-            ):
-                out.add(p)
+    if not INF.is_dir():
+        return out
+    train_names: set[str] = set()
+    for p in INF.iterdir():
+        if p.is_dir() and p.name.startswith("inference_carolinas_"):
+            out.add(p)
+            train_names.add(carolinas_train_from_inference(p.name))
+    if not TRAIN.is_dir():
+        return out
+    for p in TRAIN.iterdir():
+        if p.is_dir() and p.name.startswith("train_carolinas_") and p.name in train_names:
+            out.add(p)
     return out
 
 
@@ -59,6 +73,13 @@ def main() -> None:
     dry_run = "--dry-run" in sys.argv
 
     removed = 0
+    ped = ROOT / "experiments" / "pedestrian"
+    if ped.is_dir():
+        if dry_run:
+            print("Would remove:", ped.relative_to(ROOT))
+        else:
+            shutil.rmtree(ped, ignore_errors=False)
+        removed += 1
     # Top-level vehicle paths (e.g. highd_l40s/, slurm/)
     if VEH.is_dir():
         for p in VEH.iterdir():

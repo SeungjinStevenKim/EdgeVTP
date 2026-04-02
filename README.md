@@ -4,7 +4,7 @@ Trajectory prediction codebase for highway surveillance datasets, including:
 - one-shot Bezier decoding
 - residual/TCN variants for better accuracy–latency trade-offs
 
-This repository is organized around YAML configs and experiment folders under `experiments/vehicle`. **Versioned runs** are the NGSIM **Table 7-style ablation grid** (radius 20 / 30 / 40 m × neighbor cap K ∈ {8, 12, 16}, with and without residual+TCN), plus **CHD (Carolinas)** train/inference folders used in the paper. Other sweeps (HighD-only trees, `_v2` variants, 35 m / 45 m extras, etc.) are removed from the tree; see `configs/archive/` or git history if you need old paths.
+This repository is organized around YAML configs and experiment folders under `experiments/vehicle` only (no pedestrian ETH/UCY trees under `experiments/`). **Versioned runs** are the NGSIM **Table 7-style ablation grid** (radius 20 / 30 / 40 m × neighbor cap K ∈ {8, 12, 16}, with and without residual+TCN), plus **CHD (Carolinas)** train/inference pairs that match a versioned inference folder. Other sweeps (HighD-only trees, `_v2` variants, 35 m / 45 m extras, orphan Carolinas K-only trains, etc.) are removed from the tree; see `configs/archive/` or git history if you need old paths.
 
 ## Highlights
 
