@@ -4,14 +4,16 @@ Trajectory prediction codebase for highway surveillance datasets, including:
 - one-shot Bezier decoding
 - residual/TCN variants for better accuracy–latency trade-offs
 
-This repository is organized around YAML configs and experiment folders under `experiments/vehicle` only (no pedestrian ETH/UCY trees under `experiments/`). **Versioned runs** are the NGSIM **Table 7-style ablation grid** (radius 20 / 30 / 40 m × neighbor cap K ∈ {8, 12, 16}, with and without residual+TCN), plus **CHD (Carolinas)** train/inference pairs that match a versioned inference folder. Other sweeps (HighD-only trees, `_v2` variants, 35 m / 45 m extras, orphan Carolinas K-only trains, etc.) are removed from the tree; see `configs/archive/` or git history if you need old paths.
+**What needs to be on GitHub for reproducibility:** code, dataset layout instructions, and **config YAMLs** (under `configs/ngsim/`, `configs/archive/`, and optionally `experiments/vehicle/.../config.yaml`). How to train/infer is below. You do **not** have to commit the whole `experiments/` tree—many projects only ship `configs/` plus docs; keeping `experiments/vehicle/` is optional convenience (saved `config.yaml` snapshots, `inference_results.txt`, `train_log.txt`). Checkpoints are **not** in Git (see Pre-trained Models).
+
+This repo’s `experiments/vehicle` snapshots cover the NGSIM **Table 7-style grid** (20 / 30 / 40 m × K ∈ {8, 12, 16} × Bezier vs residual+TCN) and **CHD (Carolinas)** runs where we version train/inference pairs. Pedestrian ETH/UCY trees are not kept under `experiments/`.
 
 ## Highlights
 
 - One-shot Bezier inference for low-latency prediction on NGSIM/CHD-style setups
 - Config-driven training/inference (`--config <yaml>`)
 - End-to-end metrics and timing logs saved per run
-- Includes trained checkpoints for key NGSIM operating points (see Pre-trained Models section)
+- Documented paths for paper NGSIM checkpoints + inference commands (weights via release/archive—not in `git clone`; see Pre-trained Models)
 
 ## Representative figure (paper)
 
@@ -110,9 +112,9 @@ Typical outputs include:
 - `<dataset>.pt` (trained checkpoint, e.g., `ngsim.pt`)
 - `train_log.txt` or `inference_results.txt`
 
-## Pre-trained Models (Included)
+## Pre-trained Models (paper checkpoints)
 
-The following key checkpoints are already present in this repository and can be used directly.
+The **three headline NGSIM operating points** from the paper are documented below: expected **`model_dir`** (train folder), matching **inference `config.yaml`**, and the weight file name **`ngsim.pt`**. After a plain `git clone`, those folders may exist but **`ngsim.pt` is usually missing**—`.gitignore` excludes `*.pt`. Download or unpack weights into the paths in the table (GitHub Release, cloud storage, etc.).
 
 | Operating Point | Train Folder | Checkpoint | Typical Inference Config | Notes |
 |---|---|---|---|---|
