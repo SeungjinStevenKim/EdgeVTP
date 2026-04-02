@@ -114,7 +114,7 @@ Typical outputs include:
 
 ## Pre-trained Models (paper checkpoints)
 
-The **three headline NGSIM operating points** from the paper are documented below: expected **`model_dir`** (train folder), matching **inference `config.yaml`**, and the weight file name **`ngsim.pt`**. After a plain `git clone`, those folders may exist but **`ngsim.pt` is usually missing**—`.gitignore` excludes `*.pt`. Download or unpack weights into the paths in the table (GitHub Release, cloud storage, etc.).
+The **three headline NGSIM operating points** from the paper are provided below. **The weight files (`ngsim.pt`) are included in this repository**, so you can run inference immediately after cloning.
 
 | Operating Point | Train Folder | Checkpoint | Typical Inference Config | Notes |
 |---|---|---|---|---|
@@ -126,9 +126,7 @@ The **three headline NGSIM operating points** from the paper are documented belo
 
 For publication and collaborators, the three operating points we emphasize are **20 m / K=16 one-shot Bezier (fastest)**, **20 m / K=16 + residual + TCN (balanced)**, and **30 m / K=16 + residual + TCN (best error)**. Each is a single file **`ngsim.pt`** next to that run’s `config.yaml` under `experiments/vehicle/train/...` (see table above).
 
-**Why `*.pt` is not in plain Git:** `.gitignore` excludes `*.pt` (size + GitHub limits). Ship weights via **GitHub Releases**, **Google Drive**, or similar, not the default commit stream.
-
-**Minimal zip layout to share** (after unzip at the **repository root**, paths must match `model_dir` in the inference YAMLs):
+**Minimal layout included in repo** (paths match `model_dir` in the inference YAMLs):
 
 ```text
 experiments/vehicle/train/train_ngsim_20m_oneshot_bezier_80ep_k16/ngsim.pt

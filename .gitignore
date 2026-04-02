@@ -164,6 +164,7 @@ datasets/
 models/
 *.pt
 *.pth
+!experiments/vehicle/**/*.pt
 *.ckpt
 *.out
 *.err
