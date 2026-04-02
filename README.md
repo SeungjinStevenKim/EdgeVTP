@@ -1,9 +1,8 @@
 # VT-Former / EdgeVTP
 
 Trajectory prediction codebase for highway surveillance datasets, including:
-- original decoder (MLP / autoregressive-style baseline)
-- one-shot Bezier decoder
-- residual/TCN variants for better accuracy-latency trade-offs
+- one-shot Bezier decoding
+- residual/TCN variants for better accuracy–latency trade-offs
 
 This repository is organized around YAML configs and experiment folders under `experiments/vehicle`.
 
@@ -73,7 +72,7 @@ python ngsim_share/main.py --config <config_path>
 ### Training example
 
 ```bash
-python ngsim_share/main.py --config experiments/vehicle/train/train_ngsim_35m_oneshot_bezier_80ep_residual_v2_tcn_5hz/config.yaml
+python ngsim_share/main.py --config experiments/vehicle/train/train_ngsim_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/config.yaml
 ```
 
 ### Inference example
@@ -120,7 +119,6 @@ The following key checkpoints are already present in this repository and can be 
 | Latency-focused (`r=20, K=16, Residual=N`) | `experiments/vehicle/train/train_ngsim_20m_oneshot_bezier_80ep_k16` | `ngsim.pt` | `experiments/vehicle/inference/inference_ngsim_20m_oneshot_bezier_80ep_k16_5hz/config.yaml` | Fastest E2E among key variants |
 | Balanced (`r=20, K=16, Residual=Y, TCN`) | `experiments/vehicle/train/train_ngsim_20m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16` | `ngsim.pt` | `experiments/vehicle/inference/inference_ngsim_20m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/config.yaml` | Strong accuracy-latency balance |
 | Error-focused (`r=30, K=16, Residual=Y, TCN`) | `experiments/vehicle/train/train_ngsim_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16` | `ngsim.pt` | `experiments/vehicle/inference/inference_ngsim_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/config.yaml` | Best ADE/FDE among key operating points |
-| Original decoder baseline (`output_type=mlp`) | `experiments/vehicle/train/train_ngsim_original_obs10_decoder_raw_1ep` | `ngsim.pt` | `experiments/vehicle/inference/inference_ngsim_original_obs10_decoder_raw_5hz/config.yaml` | Baseline for speed/accuracy comparison |
 
 ### Paper: sharing the three main checkpoints
 
