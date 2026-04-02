@@ -14,6 +14,12 @@ This repository is organized around YAML configs and experiment folders under `e
 - End-to-end metrics and timing logs saved per run
 - Includes trained checkpoints for key NGSIM operating points (see Pre-trained Models section)
 
+## Representative figure (paper)
+
+![EdgeVTP / VT-Former architecture](docs/figures/edgevtp_architecture.png)
+
+This PNG is exported from the paper figure for GitHub rendering (PDF is not shown inline). Source PDF if you have the paper tree locally: `CVPR___EVW_2026/figures/edgevtp_architecture.pdf`.
+
 ## Installation
 
 ### Option 1: Conda (recommended)
@@ -116,10 +122,52 @@ The following key checkpoints are already present in this repository and can be 
 | Error-focused (`r=30, K=16, Residual=Y, TCN`) | `experiments/vehicle/train/train_ngsim_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16` | `ngsim.pt` | `experiments/vehicle/inference/inference_ngsim_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/config.yaml` | Best ADE/FDE among key operating points |
 | Original decoder baseline (`output_type=mlp`) | `experiments/vehicle/train/train_ngsim_original_obs10_decoder_raw_1ep` | `ngsim.pt` | `experiments/vehicle/inference/inference_ngsim_original_obs10_decoder_raw_5hz/config.yaml` | Baseline for speed/accuracy comparison |
 
-You can also use packaged artifacts in repo root:
-- `VT_Former_Inference_5models.zip`
-- `VT_Former_NGSIM_18variants.zip`
-- `VT_Former_UNCC_30m_TCN.zip`
+### Paper: sharing the three main checkpoints
+
+For publication and collaborators, the three operating points we emphasize are **20 m / K=16 one-shot Bezier (fastest)**, **20 m / K=16 + residual + TCN (balanced)**, and **30 m / K=16 + residual + TCN (best error)**. Each is a single file **`ngsim.pt`** next to that run’s `config.yaml` under `experiments/vehicle/train/...` (see table above).
+
+**Why `*.pt` is not in plain Git:** `.gitignore` excludes `*.pt` (size + GitHub limits). Ship weights via **GitHub Releases**, **Google Drive**, or similar, not the default commit stream.
+
+**Minimal zip layout to share** (after unzip at the **repository root**, paths must match `model_dir` in the inference YAMLs):
+
+```text
+experiments/vehicle/train/train_ngsim_20m_oneshot_bezier_80ep_k16/ngsim.pt
+experiments/vehicle/train/train_ngsim_20m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/ngsim.pt
+experiments/vehicle/train/train_ngsim_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/ngsim.pt
+```
+
+**Recipient setup:** unzip into the same VT-Former tree (or clone first, then extract so the three paths above exist). Keep the **preprocessed NGSIM** layout under `datasets/ngsim/` as in the Dataset section.
+
+### Paper: running inference (three models)
+
+From the repo root, with CUDA if available:
+
+```bash
+# 1) Latency-focused — one-shot Bezier, 20 m, K=16 (no residual)
+python ngsim_share/main.py --config experiments/vehicle/inference/inference_ngsim_20m_oneshot_bezier_80ep_k16_5hz/config.yaml
+
+# 2) Balanced — same radius, residual v2 + TCN, K=16
+python ngsim_share/main.py --config experiments/vehicle/inference/inference_ngsim_20m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/config.yaml
+
+# 3) Error-focused — 30 m, residual v2 + TCN, K=16
+python ngsim_share/main.py --config experiments/vehicle/inference/inference_ngsim_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/config.yaml
+```
+
+Optional timing breakdown:
+
+```bash
+python ngsim_share/main.py --config experiments/vehicle/inference/inference_ngsim_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/config.yaml --profile_inference
+```
+
+Run all three in sequence:
+
+```bash
+bash scripts/run_inference_paper_3models.sh
+```
+
+**Outputs:** each run writes under `experiments/vehicle/inference/<run_name>/` (e.g. `inference_results.txt` and a copy of the resolved `config.yaml`). The `run_name` is defined inside each inference `config.yaml`.
+
+**If `FileNotFoundError` for `ngsim.pt`:** the checkpoint path is `os.path.join(model_dir, "ngsim.pt")` with `model_dir` from the YAML—verify the three `ngsim.pt` files sit in the train folders in the table at the top of this section.
 
 ## Repro Tips
 
