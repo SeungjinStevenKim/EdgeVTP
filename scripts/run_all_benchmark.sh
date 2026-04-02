@@ -12,7 +12,7 @@ set -e
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_DIR"
 
-CONFIGS_DIR="configs/pedestrian"
+CONFIGS_DIR="configs/archive/pedestrian"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 LOG_FILE="experiments/pedestrian/slurm/benchmark_all_${TIMESTAMP}.out"
 mkdir -p experiments/pedestrian/slurm

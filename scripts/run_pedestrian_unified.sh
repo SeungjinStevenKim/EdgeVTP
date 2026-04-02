@@ -17,4 +17,4 @@ source ~/.bashrc
 conda activate /project/vtrajectory/conda_envs/vt_former
 export LD_LIBRARY_PATH=/project/vtrajectory/conda_envs/vt_former/lib:$LD_LIBRARY_PATH
 
-python main.py --config configs/pedestrian/pedestrian_unified.yaml
+python main.py --config configs/archive/pedestrian/pedestrian_unified.yaml

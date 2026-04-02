@@ -18,7 +18,7 @@ conda activate /project/vtrajectory/conda_envs/vt_former
 export LD_LIBRARY_PATH=/project/vtrajectory/conda_envs/vt_former/lib:$LD_LIBRARY_PATH
 
 # 1. Training (LR 0.01, No Mirroring)
-python3 main.py --config configs/ngsim/train_ngsim_oneshot_bezier_20ep.yaml
+python3 main.py --config configs/archive/ngsim/train_ngsim_oneshot_bezier_20ep.yaml
 
 # 2. Inference
-python3 main.py --config configs/ngsim/inference_ngsim_oneshot_bezier_20ep.yaml
+python3 main.py --config configs/archive/ngsim/inference_ngsim_oneshot_bezier_20ep.yaml

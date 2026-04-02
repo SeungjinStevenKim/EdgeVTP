@@ -1,0 +1,35 @@
+# Carolinas Carolinas_highAngle: Inference Bezier+Residual v2 30m + K16, 80ep @ 5Hz (TCN)
+input_data:
+  dataset: ['Carolinas_highAngle']
+  subject: vehicle
+  frame_subsample: 1
+  train_folder: train
+  val_folder: val
+  test_folder: test
+  observed_steps: 15
+  prtediction_step: 25
+  points_per_position: 2
+  reduction_ratio: 16
+  relation_neighbor_limit_meter: 30.0
+  relation_neighbor_limit_k: 16
+  augment: false
+
+training:
+  train: false
+  save_model: false
+  output_projection: false
+  use_residual_separation: true
+  use_tcn: true
+  tcn_kernel_size: 3
+  tcn_num_layers: 2
+  device: 'cuda:0'
+  batch_size: 16
+  experiment_root: 'experiments/vehicle'
+  model_dir: 'experiments/vehicle/train/train_carolinas_highAngle_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16'
+  run_name: 'inference_carolinas_highAngle_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16'
+  backbone: 'transformer'
+  output_type: 'one_shot_bezier'
+  num_heads: 2
+  num_layers: 2
+  ffl: 16
+  dropout: 0.2

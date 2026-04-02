@@ -19,10 +19,10 @@ conda activate /project/vtrajectory/conda_envs/vt_former
 export LD_LIBRARY_PATH=/project/vtrajectory/conda_envs/vt_former/lib:$LD_LIBRARY_PATH
 
 echo "=== Inference: Chunked Bezier (No Aug) ==="
-python main.py --config configs/ngsim/inference_ngsim_30m_chunked_bezier_20ep.yaml
+python main.py --config configs/archive/ngsim/inference_ngsim_30m_chunked_bezier_20ep.yaml
 
 echo ""
 echo "=== Inference: Chunked Bezier (Aug) ==="
-python main.py --config configs/ngsim/inference_ngsim_30m_aug_chunked_bezier_20ep.yaml
+python main.py --config configs/archive/ngsim/inference_ngsim_30m_aug_chunked_bezier_20ep.yaml
 
 echo "Done"

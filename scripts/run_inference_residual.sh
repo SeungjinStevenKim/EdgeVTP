@@ -8,4 +8,4 @@ cd "$PROJECT_ROOT"
 export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
 
 echo "=== Run: inference_ngsim_30m_oneshot_bezier_20ep_residual ==="
-python main.py --config configs/ngsim/inference_ngsim_30m_oneshot_bezier_20ep_residual.yaml
+python main.py --config configs/archive/ngsim/inference_ngsim_30m_oneshot_bezier_20ep_residual.yaml

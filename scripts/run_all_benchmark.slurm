@@ -23,7 +23,7 @@ source ~/.bashrc
 conda activate /project/vtrajectory/conda_envs/vt_former
 export LD_LIBRARY_PATH=/project/vtrajectory/conda_envs/vt_former/lib:$LD_LIBRARY_PATH
 
-CONFIGS="configs/pedestrian"
+CONFIGS="configs/archive/pedestrian"
 
 echo "=============================================="
 echo "VT-Former Full Benchmark - $(date)"

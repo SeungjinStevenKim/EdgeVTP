@@ -5,7 +5,7 @@
 # Usage: ./scripts/run_all_benchmark_parallel.slurm
 
 cd /project/vtrajectory/models/VT_Former-main
-CONFIGS="configs/pedestrian"
+CONFIGS="configs/archive/pedestrian"
 
 echo "Submitting 4 parallel jobs..."
 

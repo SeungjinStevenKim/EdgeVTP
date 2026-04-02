@@ -17,4 +17,4 @@ conda activate /project/vtrajectory/conda_envs/vt_former
 export LD_LIBRARY_PATH=/project/vtrajectory/conda_envs/vt_former/lib:$LD_LIBRARY_PATH
 
 # Inference - One-shot Bezier (30M filter + Aug)
-python3 main.py --config configs/ngsim/inference_oneshot_fast.yaml
+python3 main.py --config configs/archive/ngsim/inference_oneshot_fast.yaml

@@ -18,11 +18,11 @@ conda activate /project/vtrajectory/conda_envs/vt_former
 export LD_LIBRARY_PATH=/project/vtrajectory/conda_envs/vt_former/lib:$LD_LIBRARY_PATH
 
 echo "=== NGSIM Train 30m chunked 20ep ==="
-python main.py --config configs/ngsim/train_ngsim_30m_chunked_20ep.yaml
+python main.py --config configs/archive/ngsim/train_ngsim_30m_chunked_20ep.yaml
 
 echo ""
 echo "=== NGSIM Inference 30m chunked 20ep ==="
-python main.py --config configs/ngsim/inference_ngsim_30m_chunked_20ep.yaml
+python main.py --config configs/archive/ngsim/inference_ngsim_30m_chunked_20ep.yaml
 
 echo ""
 echo "=== Done ==="

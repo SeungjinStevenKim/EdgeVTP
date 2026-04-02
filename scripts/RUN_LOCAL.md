@@ -9,10 +9,10 @@ cluster 대신 로컬에서 실행할 때 사용합니다. 결과 형식은 clus
 ./scripts/run_local.sh
 
 # preset config 지정
-./scripts/run_local.sh configs/pedestrian/train_pedestrian_original_10m_aug.yaml
-./scripts/run_local.sh configs/pedestrian/inference_pedestrian_original_10m_aug.yaml
-./scripts/run_local.sh configs/pedestrian/train_pedestrian_kan_15m_aug.yaml
-./scripts/run_local.sh configs/pedestrian/inference_pedestrian_kan_15m_aug.yaml
+./scripts/run_local.sh configs/archive/pedestrian/train_pedestrian_original_10m_aug.yaml
+./scripts/run_local.sh configs/archive/pedestrian/inference_pedestrian_original_10m_aug.yaml
+./scripts/run_local.sh configs/archive/pedestrian/train_pedestrian_kan_15m_aug.yaml
+./scripts/run_local.sh configs/archive/pedestrian/inference_pedestrian_kan_15m_aug.yaml
 ```
 
 ## 출력 형식 (cluster와 동일)

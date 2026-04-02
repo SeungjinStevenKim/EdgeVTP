@@ -8,7 +8,7 @@
 # Usage: sbatch scripts/run_ngsim_benchmark_all.slurm
 
 cd /project/vtrajectory/models/VT_Former-main
-CONFIGS="configs/ngsim"
+CONFIGS="configs/archive/ngsim"
 mkdir -p experiments/vehicle/slurm
 
 # Time estimates: 20ep~2h, 40ep~4h, 80ep~8h

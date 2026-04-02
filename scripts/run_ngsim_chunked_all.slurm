@@ -8,7 +8,7 @@
 # Usage: bash scripts/run_ngsim_chunked_all.slurm
 
 PARTITION=mb-l40s
-CONFIGS=configs/ngsim
+CONFIGS=configs/archive/ngsim
 TIME_20=02:00:00
 TIME_40=04:00:00
 TIME_60=06:00:00

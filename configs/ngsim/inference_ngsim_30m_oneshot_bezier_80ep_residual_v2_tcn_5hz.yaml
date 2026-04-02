@@ -1,0 +1,34 @@
+# NGSIM: Inference Bezier+Residual v2 + TCN 80ep (5Hz)
+input_data:
+  dataset: ['ngsim']
+  frame_subsample: 2
+  subject: vehicle
+  train_folder: train
+  val_folder: val
+  test_folder: test
+  observed_steps: 15
+  prtediction_step: 25
+  points_per_position: 2
+  reduction_ratio: 16
+  relation_neighbor_limit_meter: 30.0
+  augment: false
+
+training:
+  train: false
+  save_model: false
+  output_projection: false
+  use_residual_separation: true
+  use_tcn: true
+  tcn_kernel_size: 3
+  tcn_num_layers: 2
+  device: 'cuda:0'
+  batch_size: 16
+  experiment_root: 'experiments/vehicle'
+  model_dir: 'experiments/vehicle/train/train_ngsim_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz'
+  run_name: 'inference_ngsim_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz'
+  backbone: 'transformer'
+  output_type: 'one_shot_bezier'
+  num_heads: 2
+  num_layers: 2
+  ffl: 16
+  dropout: 0.2

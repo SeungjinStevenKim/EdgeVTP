@@ -1,0 +1,35 @@
+# highD: Inference Bezier+Residual v2 20m + K12, 80ep @ 10Hz (TCN)
+input_data:
+  dataset: ['highd_ngsim']
+  subject: vehicle
+  frame_subsample: 1
+  train_folder: train
+  val_folder: val
+  test_folder: test
+  observed_steps: 15
+  prtediction_step: 25
+  points_per_position: 2
+  reduction_ratio: 16
+  relation_neighbor_limit_meter: 20.0
+  relation_neighbor_limit_k: 12
+  augment: false
+
+training:
+  train: false
+  save_model: false
+  output_projection: false
+  use_residual_separation: true
+  use_tcn: true
+  tcn_kernel_size: 3
+  tcn_num_layers: 2
+  device: 'cuda:0'
+  batch_size: 16
+  experiment_root: 'experiments/vehicle'
+  model_dir: 'experiments/vehicle/train/train_highd_20m_oneshot_bezier_80ep_residual_v2_tcn_k12'
+  run_name: 'inference_highd_20m_oneshot_bezier_80ep_residual_v2_tcn_k12'
+  backbone: 'transformer'
+  output_type: 'one_shot_bezier'
+  num_heads: 2
+  num_layers: 2
+  ffl: 16
+  dropout: 0.2

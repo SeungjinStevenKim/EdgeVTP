@@ -171,3 +171,23 @@ models/
 *.docx
 =*
 # experiments/ included: config.yaml, inference_results.txt (checkpoints excluded via *.pt)
+
+# Training / monitoring artifacts (local-only; do not publish to GitHub)
+**/events.out.tfevents.*
+**/lightning_logs/
+**/wandb/
+# Optional local experiment dumps (keep configs + inference_results.txt tracked)
+experiments/**/qualitative/
+experiments/**/qualitative_*/
+**/tb_logs/
+
+# Paper, release bundles, and IDE noise at repo root
+CVPR___EVW_2026*/
+CVPR___EVW_2026*.pdf
+VT_Former*.zip
+*.zip
+*.tar.gz
+*.tgz
+*.7z
+.DS_Store
+Thumbs.db

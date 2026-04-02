@@ -19,10 +19,10 @@ conda activate /project/vtrajectory/conda_envs/vt_former
 export LD_LIBRARY_PATH=/project/vtrajectory/conda_envs/vt_former/lib:$LD_LIBRARY_PATH
 
 echo "=== Training: Original VT-Former (30M + Scale Aug + Mirroring) ==="
-python main.py --config configs/ngsim/train_ngsim_30m_aug_mirror_20ep.yaml
+python main.py --config configs/archive/ngsim/train_ngsim_30m_aug_mirror_20ep.yaml
 
 echo ""
 echo "=== Inference: Original VT-Former (30M + Scale Aug + Mirroring) ==="
-python main.py --config configs/ngsim/inference_ngsim_30m_aug_mirror_20ep.yaml
+python main.py --config configs/archive/ngsim/inference_ngsim_30m_aug_mirror_20ep.yaml
 
 echo "Done"

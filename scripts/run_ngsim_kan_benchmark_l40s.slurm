@@ -8,7 +8,7 @@
 # Usage: bash scripts/run_ngsim_kan_benchmark_l40s.slurm
 
 cd /project/vtrajectory/models/VT_Former-main
-CONFIGS="configs/ngsim"
+CONFIGS="configs/archive/ngsim"
 mkdir -p experiments/vehicle/slurm
 PARTITION="mb-l40s"
 

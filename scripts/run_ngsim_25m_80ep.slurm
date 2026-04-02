@@ -18,11 +18,11 @@ conda activate /project/vtrajectory/conda_envs/vt_former
 export LD_LIBRARY_PATH=/project/vtrajectory/conda_envs/vt_former/lib:$LD_LIBRARY_PATH
 
 echo "=== NGSIM Train 80ep (25m radius, data augmentation) ==="
-python main.py --config configs/ngsim/train_ngsim_25m_80ep.yaml
+python main.py --config configs/archive/ngsim/train_ngsim_25m_80ep.yaml
 
 echo ""
 echo "=== NGSIM Inference 80ep ==="
-python main.py --config configs/ngsim/inference_ngsim_25m_80ep.yaml
+python main.py --config configs/archive/ngsim/inference_ngsim_25m_80ep.yaml
 
 echo ""
 echo "=== Done ==="

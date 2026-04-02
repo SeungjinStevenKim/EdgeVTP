@@ -19,15 +19,15 @@ conda activate /project/vtrajectory/conda_envs/vt_former
 export LD_LIBRARY_PATH=/project/vtrajectory/conda_envs/vt_former/lib:$LD_LIBRARY_PATH
 
 echo "Starting training: Chunked Bezier (5-waypoint stages) 20ep"
-python main.py --config configs/ngsim/train_ngsim_30m_aug_chunked_bezier_20ep.yaml
+python main.py --config configs/archive/ngsim/train_ngsim_30m_aug_chunked_bezier_20ep.yaml
 
 echo "Training complete. Starting inference..."
 
 # Create inference config dynamically
-cp configs/ngsim/train_ngsim_30m_aug_chunked_bezier_20ep.yaml configs/ngsim/inference_ngsim_30m_aug_chunked_bezier_20ep.yaml
-sed -i 's/train: true/train: false/g' configs/ngsim/inference_ngsim_30m_aug_chunked_bezier_20ep.yaml
-sed -i 's/run_name: .*/run_name: "inference_ngsim_30m_aug_chunked_bezier_20ep"/g' configs/ngsim/inference_ngsim_30m_aug_chunked_bezier_20ep.yaml
+cp configs/archive/ngsim/train_ngsim_30m_aug_chunked_bezier_20ep.yaml configs/archive/ngsim/inference_ngsim_30m_aug_chunked_bezier_20ep.yaml
+sed -i 's/train: true/train: false/g' configs/archive/ngsim/inference_ngsim_30m_aug_chunked_bezier_20ep.yaml
+sed -i 's/run_name: .*/run_name: "inference_ngsim_30m_aug_chunked_bezier_20ep"/g' configs/archive/ngsim/inference_ngsim_30m_aug_chunked_bezier_20ep.yaml
 
-python main.py --config configs/ngsim/inference_ngsim_30m_aug_chunked_bezier_20ep.yaml
+python main.py --config configs/archive/ngsim/inference_ngsim_30m_aug_chunked_bezier_20ep.yaml
 
 echo "Job complete"

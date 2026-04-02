@@ -1,0 +1,45 @@
+# NGSIM: 35m + K=12, 80ep, Residual v2 + TCN @ 5Hz — Base: 2 layers, 2 heads + smoothness
+input_data:
+  dataset: ['ngsim']
+  subject: vehicle
+  frame_subsample: 2
+  train_folder: train
+  val_folder: val
+  test_folder: test
+  observed_steps: 15
+  prtediction_step: 25
+  points_per_position: 2
+  reduction_ratio: 16
+  relation_neighbor_limit_meter: 35.0
+  relation_neighbor_limit_k: 12
+  relation_neighbor_random_sample: true
+  augment: false
+
+training:
+  save_model: true
+  train: true
+  validation_interval: 1
+  output_projection: false
+  use_residual_separation: true
+  use_tcn: true
+  tcn_kernel_size: 3
+  tcn_num_layers: 2
+  device: 'cuda:0'
+  batch_size: 16
+  weight_decay: 0.0005
+  milestones: [40, 60, 70]
+  epoches: 80
+  experiment_root: 'experiments/vehicle'
+  run_name: 'train_ngsim_35m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k12_L2H2'
+  backbone: 'transformer'
+  output_type: 'one_shot_bezier'
+  model_dir: 'experiments/vehicle/train/train_ngsim_35m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k12_L2H2'
+  learning_rate: 0.01
+  num_heads: 2
+  num_layers: 2
+  ffl: 16
+  dropout: 0.2
+  # Smoothness (jerk-like) regularization
+  use_smoothness_loss: true
+  smoothness_weight: 0.05
+  smoothness_warmup_epochs: 5

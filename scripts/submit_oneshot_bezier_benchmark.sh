@@ -7,34 +7,34 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Train configs (30m_aug_20ep already has results, optional to skip)
 TRAIN_CONFIGS=(
-  "configs/ngsim/train_ngsim_oneshot_bezier_20ep.yaml"
-  "configs/ngsim/train_ngsim_oneshot_bezier_40ep.yaml"
-  "configs/ngsim/train_ngsim_oneshot_bezier_80ep.yaml"
-  "configs/ngsim/train_ngsim_30m_oneshot_bezier_20ep.yaml"
-  "configs/ngsim/train_ngsim_30m_oneshot_bezier_40ep.yaml"
-  "configs/ngsim/train_ngsim_30m_oneshot_bezier_80ep.yaml"
-  "configs/ngsim/train_ngsim_aug_oneshot_bezier_20ep.yaml"
-  "configs/ngsim/train_ngsim_aug_oneshot_bezier_40ep.yaml"
-  "configs/ngsim/train_ngsim_aug_oneshot_bezier_80ep.yaml"
-  # "configs/ngsim/train_ngsim_30m_aug_oneshot_bezier_20ep.yaml"  # DONE - skip
-  "configs/ngsim/train_ngsim_30m_aug_oneshot_bezier_40ep.yaml"
-  "configs/ngsim/train_ngsim_30m_aug_oneshot_bezier_80ep.yaml"
+  "configs/archive/ngsim/train_ngsim_oneshot_bezier_20ep.yaml"
+  "configs/archive/ngsim/train_ngsim_oneshot_bezier_40ep.yaml"
+  "configs/archive/ngsim/train_ngsim_oneshot_bezier_80ep.yaml"
+  "configs/archive/ngsim/train_ngsim_30m_oneshot_bezier_20ep.yaml"
+  "configs/archive/ngsim/train_ngsim_30m_oneshot_bezier_40ep.yaml"
+  "configs/archive/ngsim/train_ngsim_30m_oneshot_bezier_80ep.yaml"
+  "configs/archive/ngsim/train_ngsim_aug_oneshot_bezier_20ep.yaml"
+  "configs/archive/ngsim/train_ngsim_aug_oneshot_bezier_40ep.yaml"
+  "configs/archive/ngsim/train_ngsim_aug_oneshot_bezier_80ep.yaml"
+  # "configs/archive/ngsim/train_ngsim_30m_aug_oneshot_bezier_20ep.yaml"  # DONE - skip
+  "configs/archive/ngsim/train_ngsim_30m_aug_oneshot_bezier_40ep.yaml"
+  "configs/archive/ngsim/train_ngsim_30m_aug_oneshot_bezier_80ep.yaml"
 )
 
 # Inference configs (all 12)
 INFERENCE_CONFIGS=(
-  "configs/ngsim/inference_ngsim_oneshot_bezier_20ep.yaml"
-  "configs/ngsim/inference_ngsim_oneshot_bezier_40ep.yaml"
-  "configs/ngsim/inference_ngsim_oneshot_bezier_80ep.yaml"
-  "configs/ngsim/inference_ngsim_30m_oneshot_bezier_20ep.yaml"
-  "configs/ngsim/inference_ngsim_30m_oneshot_bezier_40ep.yaml"
-  "configs/ngsim/inference_ngsim_30m_oneshot_bezier_80ep.yaml"
-  "configs/ngsim/inference_ngsim_aug_oneshot_bezier_20ep.yaml"
-  "configs/ngsim/inference_ngsim_aug_oneshot_bezier_40ep.yaml"
-  "configs/ngsim/inference_ngsim_aug_oneshot_bezier_80ep.yaml"
-  "configs/ngsim/inference_ngsim_30m_aug_oneshot_bezier_20ep.yaml"
-  "configs/ngsim/inference_ngsim_30m_aug_oneshot_bezier_40ep.yaml"
-  "configs/ngsim/inference_ngsim_30m_aug_oneshot_bezier_80ep.yaml"
+  "configs/archive/ngsim/inference_ngsim_oneshot_bezier_20ep.yaml"
+  "configs/archive/ngsim/inference_ngsim_oneshot_bezier_40ep.yaml"
+  "configs/archive/ngsim/inference_ngsim_oneshot_bezier_80ep.yaml"
+  "configs/archive/ngsim/inference_ngsim_30m_oneshot_bezier_20ep.yaml"
+  "configs/archive/ngsim/inference_ngsim_30m_oneshot_bezier_40ep.yaml"
+  "configs/archive/ngsim/inference_ngsim_30m_oneshot_bezier_80ep.yaml"
+  "configs/archive/ngsim/inference_ngsim_aug_oneshot_bezier_20ep.yaml"
+  "configs/archive/ngsim/inference_ngsim_aug_oneshot_bezier_40ep.yaml"
+  "configs/archive/ngsim/inference_ngsim_aug_oneshot_bezier_80ep.yaml"
+  "configs/archive/ngsim/inference_ngsim_30m_aug_oneshot_bezier_20ep.yaml"
+  "configs/archive/ngsim/inference_ngsim_30m_aug_oneshot_bezier_40ep.yaml"
+  "configs/archive/ngsim/inference_ngsim_30m_aug_oneshot_bezier_80ep.yaml"
 )
 
 MODE="${1:-both}"  # train | inference | both

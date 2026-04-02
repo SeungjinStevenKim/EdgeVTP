@@ -82,6 +82,14 @@ python ngsim_share/main.py --config experiments/vehicle/inference/inference_ngsi
 python ngsim_share/main.py --config experiments/vehicle/inference/inference_ngsim_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/config.yaml --profile_inference
 ```
 
+## Config files
+
+- **`configs/ngsim/`** — Small, stable set of YAMLs for the bundled **five NGSIM inference** models (and their train recipes). Same filenames as `inference_package/configs/ngsim/`.
+- **`experiments/vehicle/.../config.yaml`** — Snapshots for **paper checkpoints** (see the pre-trained table below).
+- **`configs/archive/`** — Older NGSIM sweeps, pedestrian configs, and optional Carolinas / HighD grids. Cluster scripts under `scripts/` point here when they need old paths.
+
+See `configs/README.md` for a short index.
+
 ## Output Structure
 
 Runs are saved under:
