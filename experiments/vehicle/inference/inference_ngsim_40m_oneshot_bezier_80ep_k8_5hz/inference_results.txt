@@ -1,0 +1,17 @@
+Experiment: inference_ngsim_40m_oneshot_bezier_80ep_k8_5hz
+Model dir: experiments/vehicle/train/train_ngsim_40m_oneshot_bezier_80ep_k8
+Relation limit: 40.0m, K=8
+Avg nodes per scene: 62.8
+Avg edges per scene: 491.2
+E2E latency (per-scene): 3.80 ms
+Model-only latency (per-scene): 2.15 ms
+Benchmark E2E (1000 runs): 2.58 ms/scene
+Benchmark Model-only (1000 runs): 1.89 ms/scene
+
+ngsim  ADE: 2.1284  FDE: 4.9597
+
+Average ADE: 2.1284
+Average FDE: 4.9597
+
+Summary | 1s | 2s | 3s | 4s | 5s | ADE | FDE
+inference_ngsim_40m_oneshot_bezier_80ep_k8_5hz | 0.60 | 1.40 | 2.42 | 3.65 | 5.07 | 2.13 | 4.96

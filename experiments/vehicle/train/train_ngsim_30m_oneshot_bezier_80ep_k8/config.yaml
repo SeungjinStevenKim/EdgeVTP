@@ -1,0 +1,39 @@
+input_data:
+  augment: false
+  dataset:
+  - ngsim
+  frame_subsample: 2
+  observed_steps: 15
+  points_per_position: 2
+  prtediction_step: 25
+  reduction_ratio: 16
+  relation_neighbor_limit_k: 8
+  relation_neighbor_limit_meter: 30.0
+  relation_neighbor_random_sample: true
+  subject: vehicle
+  test_folder: test
+  train_folder: train
+  val_folder: val
+training:
+  backbone: transformer
+  batch_size: 16
+  device: cuda:0
+  dropout: 0.2
+  epoches: 80
+  experiment_root: experiments/vehicle
+  ffl: 16
+  learning_rate: 0.01
+  milestones:
+  - 10
+  - 30
+  - 45
+  model_dir: experiments/vehicle/train/train_ngsim_30m_oneshot_bezier_80ep_k8
+  num_heads: 2
+  num_layers: 2
+  output_projection: false
+  output_type: one_shot_bezier
+  run_name: train_ngsim_30m_oneshot_bezier_80ep_k8
+  save_model: true
+  train: true
+  validation_interval: 1
+  weight_decay: 0.0005

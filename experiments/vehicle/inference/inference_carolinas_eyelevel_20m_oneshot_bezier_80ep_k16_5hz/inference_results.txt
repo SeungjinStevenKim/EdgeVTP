@@ -1,0 +1,17 @@
+Experiment: inference_carolinas_eyelevel_20m_oneshot_bezier_80ep_k16_5hz
+Model dir: experiments/vehicle/train/train_carolinas_eyelevel_20m_oneshot_bezier_80ep_k16
+Relation limit: 20.0m, K=16
+Avg nodes per scene: 3.2
+Avg edges per scene: 0.3
+E2E latency (per-scene): 2.82 ms
+Model-only latency (per-scene): 2.13 ms
+Benchmark E2E (1000 runs): 2.68 ms/scene
+Benchmark Model-only (1000 runs): 1.99 ms/scene
+
+Carolinas_eyelevel  ADE: 27.5266  FDE: 84.6178
+
+Average ADE: 27.5266
+Average FDE: 84.6178
+
+Summary | 1s | 2s | 3s | 4s | 5s | ADE | FDE
+inference_carolinas_eyelevel_20m_oneshot_bezier_80ep_k16_5hz | 7.50 | 15.90 | 27.78 | 48.82 | 94.64 | 27.53 | 84.62

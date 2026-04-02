@@ -1,0 +1,17 @@
+Experiment: inference_carolinas_highAngle_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16
+Model dir: experiments/vehicle/train/train_carolinas_highAngle_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16
+Relation limit: 30.0m, K=16
+Avg nodes per scene: 5.1
+Avg edges per scene: 3.3
+E2E latency (per-scene): 3.81 ms
+Model-only latency (per-scene): 3.09 ms
+Benchmark E2E (1000 runs): 3.68 ms/scene
+Benchmark Model-only (1000 runs): 2.96 ms/scene
+
+Carolinas_highAngle  ADE: 15.2306  FDE: 52.2770
+
+Average ADE: 15.2306
+Average FDE: 52.2770
+
+Summary | 1s | 2s | 3s | 4s | 5s | ADE | FDE
+inference_carolinas_highAngle_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16 | 4.38 | 8.71 | 14.55 | 26.01 | 59.50 | 15.23 | 52.28
