@@ -7,7 +7,7 @@
 ---
 
 - [🚀 Quick Start](#-quick-start)
-- [📊 Paper Results](#-paper-results-ngsim)
+- [📊 Paper Results](#-paper-results)
 - [📂 Repository Structure](#-repository-structure)
 - [📜 Citation](#-citation)
 
@@ -34,33 +34,60 @@ datasets/
     train/
     val/
     test/
+  Carolinas_eyelevel/
+    train/
+    val/
+    test/
+  Carolinas_highAngle/
+    train/
+    val/
+    test/
 ```
 
-### 3. Running Inference (Paper Repro)
-Pre-trained weights are **included** in the `experiments/vehicle/train/` folders. You can reproduce the paper's three main operating points immediately:
+### 3. Download Datasets
+*   **NGSIM**: [Download here](https://drive.google.com/file/d/16xKlIgvZQrpi0Wm6sPpKyhGjQRPIwFW0/view)
+*   **Carolinas (Eye-level)**: [Link TBD]
+*   **Carolinas (High-Angle)**: [Link TBD]
 
+### 4. Running Inference (Paper Repro)
+Pre-trained weights are **included** in the `experiments/vehicle/train/` folders. You can reproduce the paper's key operating points immediately:
+
+#### NGSIM
 | Model | Radius | Residual | Config Path |
 | :--- | :--- | :--- | :--- |
 | **Latency** | 20m | No | `experiments/vehicle/inference/inference_ngsim_20m_oneshot_bezier_80ep_k16_5hz/config.yaml` |
 | **Balanced** | 20m | Yes | `experiments/vehicle/inference/inference_ngsim_20m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/config.yaml` |
 | **Error** | 30m | Yes | `experiments/vehicle/inference/inference_ngsim_30m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/config.yaml` |
 
+#### Carolinas (CHD)
+| Dataset | Radius | Residual | Config Path |
+| :--- | :--- | :--- | :--- |
+| **Eye-level** | 20m | Yes | `experiments/vehicle/inference/inference_carolinas_eyelevel_20m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/config.yaml` |
+| **High-Angle** | 20m | Yes | `experiments/vehicle/inference/inference_carolinas_highAngle_20m_oneshot_bezier_80ep_residual_v2_tcn_5hz_k16/config.yaml` |
+
 **Command:**
 ```bash
-python ngsim_share/main.py --config <CONFIG_PATH>
+python main.py --config <CONFIG_PATH>
 ```
 
 ---
 
-## 📊 Paper Results (NGSIM)
+## 📊 Paper Results
 
-Verified performance on the headline operating points (K=16, 5Hz):
+Verified performance on headline operating points (K=16, 5Hz):
 
+### NGSIM
 | Model Variant | Radius | ADE ↓ | FDE ↓ | Latency (E2E) |
 | :--- | :--- | :--- | :--- | :--- |
 | Latency-focused | 20m | 2.13 | 4.93 | 2.83 ms |
 | Balanced | 20m | 1.89 | 4.37 | 4.36 ms |
 | Error-focused | 30m | 1.85 | 4.25 | 4.60 ms |
+
+### Carolinas (CHD)
+| Dataset | Radius | ADE ↓ | FDE ↓ | Latency (E2E) |
+| :--- | :--- | :--- | :--- | :--- |
+| Eye-level (Balanced) | 20m | 19.24 | 56.55 | 3.94 ms |
+| High-Angle (Balanced) | 20m | 18.77 | 60.04 | 3.68 ms |
 
 ---
 
@@ -68,8 +95,8 @@ Verified performance on the headline operating points (K=16, 5Hz):
 
 *   `configs/`: Core YAML recipes for NGSIM and archive sweeps.
 *   `experiments/`: Checkpoints (`ngsim.pt`) and result logs for paper runs.
-*   `ngsim_share/`: Primary entry point and shared utilities.
 *   `scripts/`: Automation for benchmarks and pruning.
+*   `utils/`: Shared model components and utilities.
 
 ---
 
@@ -80,7 +107,7 @@ If you find this work useful, please cite our CVPR EVW 2026 paper:
 ```bibtex
 @inproceedings{edgevtp2026,
   title={EdgeVTP: Efficient Edge Vehicle Trajectory Prediction via Graph-based Transformer},
-  author={Danesh Pazho, Armin and Alinezhad Noghre, Ghazal and Katariya, Vinit and Tabkhi, Hamed},
+  author={Kim, Seungjin and Neff, Christopher and Jafarpourmarzouni, Reza and Tabkhivayghan, Hamed and Katariya, Vinit},
   booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)},
   year={2026}
 }
