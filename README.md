@@ -1,8 +1,8 @@
-# EdgeVTP / VT-Former
+# EdgeVTP
 
 **EdgeVTP** (Efficient Edge Vehicle Trajectory Prediction) is a lightweight, graph-based trajectory prediction codebase designed for high-performance highway surveillance. It features one-shot Bezier decoding and TCN-based residual modules for optimal accuracy-latency trade-offs on edge devices.
 
-![EdgeVTP / VT-Former architecture](docs/figures/edgevtp_architecture.png)
+![EdgeVTP architecture](docs/figures/edgevtp_architecture.png)
 
 ---
 
@@ -17,8 +17,8 @@
 
 ### 1. Installation
 ```bash
-conda create -n vt_former python=3.8 -y
-conda activate vt_former
+conda create -n edgevtp python=3.8 -y
+conda activate edgevtp
 
 # Install PyTorch & PyG
 pip install torch==1.12.0+cu116 torchvision==0.13.0+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
@@ -74,20 +74,46 @@ python main.py --config <CONFIG_PATH>
 
 ## 📊 Paper Results
 
-Verified performance on headline operating points (K=16, 5Hz):
+### 1. NGSIM: Accuracy-Latency Trade-off
+EdgeVTP achieves competitive prediction quality while being significantly faster than transformer-based baselines.
 
-### NGSIM
-| Model Variant | Radius | ADE ↓ | FDE ↓ | Latency (E2E) |
-| :--- | :--- | :--- | :--- | :--- |
-| Latency-focused | 20m | 2.13 | 4.93 | 2.83 ms |
-| Balanced | 20m | 1.89 | 4.37 | 4.36 ms |
-| Error-focused | 30m | 1.85 | 4.25 | 4.60 ms |
+| Model | ADE ↓ | FDE ↓ | E2E Latency ↓ | Improvement |
+| :--- | :---: | :---: | :---: | :--- |
+| Pishgu [22] | 2.44 | 5.39 | 3.50 ms | - |
+| CS-LSTM [12] | 2.29 | 3.34 | 3.61 ms | - |
+| STA-LSTM [25] | **1.89** | **3.16** | 5.01 ms | - |
+| VT-Former$_{SH}$ [1] | 2.10 | 4.91 | 23.69 ms | - |
+| **EdgeVTP$_{Lat}$ (Ours)** | 2.13 | 4.93 | **3.17 ms** | **7.4x faster** than VT-Former |
+| **EdgeVTP$_{Balanced}$ (Ours)** | **1.89** | 4.37 | 4.30 ms | Balanced performance |
+| **EdgeVTP$_{Error}$ (Ours)** | **1.85** | 4.25 | 4.58 ms | **Best Accuracy** |
 
-### Carolinas (CHD)
-| Dataset | Radius | ADE ↓ | FDE ↓ | Latency (E2E) |
-| :--- | :--- | :--- | :--- | :--- |
-| Eye-level (Balanced) | 20m | 19.24 | 56.55 | 3.94 ms |
-| High-Angle (Balanced) | 20m | 18.77 | 60.04 | 3.68 ms |
+*Note: E2E latency measured on NVIDIA H100 (batch=1) using a unified protocol.*
+
+### 2. Carolinas (CHD): Robustness Across Viewpoints
+EdgeVTP outperforms state-of-the-art methods across different surveillance perspectives.
+
+#### Eye-level Split (Pixels ↓)
+| Model | ADE | FDE |
+| :--- | :---: | :---: |
+| S-STGCNN [24] | 24.33 | 95.22 |
+| VT-Former$_{SH}$ [1] | 21.86 | 66.28 |
+| **EdgeVTP$_{Balanced}$ (Ours)** | **19.24** | **56.55** |
+
+#### High-Angle Split (Pixels ↓)
+| Model | ADE | FDE |
+| :--- | :---: | :---: |
+| Pishgu [22] | 18.33 | 61.92 |
+| VT-Former$_{SH}$ [1] | 25.33 | 88.99 |
+| **EdgeVTP$_{Error}$ (Ours)** | **15.23** | **52.28** |
+
+### 3. Edge Device Benchmarks (Jetson)
+EdgeVTP is designed for real-world deployment on resource-constrained hardware.
+
+| Model | Jetson Nano (10W) ↓ | Jetson Xavier NX (20W) ↓ |
+| :--- | :---: | :---: |
+| VT-Former$_{LH}$ [1] | 1034.26 ms | 400.95 ms |
+| STA-LSTM [25] | 51.82 ms | 30.64 ms |
+| **EdgeVTP$_{Lat}$ (Ours)** | **27.87 ms** (~37x faster) | **11.85 ms** (~34x faster) |
 
 ---
 
