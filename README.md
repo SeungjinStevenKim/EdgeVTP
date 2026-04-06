@@ -46,8 +46,7 @@ datasets/
 
 ### 3. Download Datasets
 *   **NGSIM**: [Download here](https://drive.google.com/file/d/16xKlIgvZQrpi0Wm6sPpKyhGjQRPIwFW0/view)
-*   **Carolinas (Eye-level)**: [Link TBD]
-*   **Carolinas (High-Angle)**: [Link TBD]
+*   **Carolinas (Eye-level & High-Angle)**: Both splits are in one zip — [Carolinas_datasets.zip](https://drive.google.com/file/d/1CEuQL04AZHFpog8FC54SsKSPWsRCvr3h/view?usp=drive_link). Extract so you have `datasets/Carolinas_eyelevel/` and `datasets/Carolinas_highAngle/` as in the structure above.
 
 ### 4. Running Inference (Paper Repro)
 Pre-trained weights are **included** in the `experiments/vehicle/train/` folders. You can reproduce the paper's key operating points immediately:
@@ -133,7 +132,7 @@ If you find this work useful, please cite our CVPR EVW 2026 paper:
 ```bibtex
 @inproceedings{edgevtp2026,
   title={EdgeVTP: Efficient Edge Vehicle Trajectory Prediction via Graph-based Transformer},
-  author={Kim, Seungjin and Neff, Christopher and Jafarpourmarzouni, Reza and Tabkhivayghan, Hamed and Katariya, Vinit},
+  author={Kim, Seungjin and Jafarpourmarzouni, Reza and Neff, Christopher and Tabkhivayghan, Hamed and Katariya, Vinit},
   booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)},
   year={2026}
 }
