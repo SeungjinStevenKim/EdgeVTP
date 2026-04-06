@@ -127,16 +127,7 @@ EdgeVTP is designed for real-world deployment on resource-constrained hardware.
 
 ## 📜 Citation
 
-If you find this work useful, please cite our CVPR EVW 2026 paper:
-
-```bibtex
-@inproceedings{edgevtp2026,
-  title={EdgeVTP: Efficient Edge Vehicle Trajectory Prediction via Graph-based Transformer},
-  author={Kim, Seungjin and Jafarpourmarzouni, Reza and Neff, Christopher and Tabkhivayghan, Hamed and Katariya, Vinit},
-  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)},
-  year={2026}
-}
-```
+**Forthcoming.** The camera-ready paper is not in the official proceedings yet. We will add a BibTeX snippet here **after CVPR/CVPRW 2026 publication**, so citations match the IEEE/CVF entry.
 
 ---
 **License**: See `LICENSE`.
