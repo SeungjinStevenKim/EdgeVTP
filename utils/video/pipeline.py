@@ -87,7 +87,11 @@ class VideoPredictor:
                     self.coord_transform, oncoming_only=args.oncoming_only
                 )
                 if obs_model is not None and obs_model.shape[0] >= args.min_agents:
-                    pred_model = self.engine.predict_scene(obs_model, isolate_agents=True)
+                    pred_model = self.engine.predict_scene(
+                        obs_model,
+                        isolate_agents=args.isolate_agents,
+                        apply_clip=not args.no_traj_clip,
+                    )
                     self.tracker.set_predictions(track_ids, pred_model, self.coord_transform)
                     tracks = self.tracker.refresh_track_views(tracks)
                     infer_count += 1

@@ -170,7 +170,7 @@ class EdgeVTPInference:
         return pred_abs, num_edges
 
     @torch.no_grad()
-    def predict_scene(self, obs_abs, isolate_agents=False):
+    def predict_scene(self, obs_abs, isolate_agents=False, apply_clip=True):
         if obs_abs.shape[0] == 0:
             return torch.empty((0, self.pred_len, 2))
 
@@ -196,10 +196,12 @@ class EdgeVTPInference:
             "isolated": bool(isolate_agents and obs.shape[0] > 1),
         }
 
-        pred_abs = clip_scene_predictions(
-            obs.detach().cpu().numpy(),
-            pred_abs.detach().cpu().numpy(),
-            self.pred_len,
-            self.obs_len,
-        )
-        return torch.as_tensor(pred_abs, dtype=torch.float32)
+        pred_np = pred_abs.detach().cpu().numpy()
+        if apply_clip:
+            pred_np = clip_scene_predictions(
+                obs.detach().cpu().numpy(),
+                pred_np,
+                self.pred_len,
+                self.obs_len,
+            )
+        return torch.as_tensor(pred_np, dtype=torch.float32)

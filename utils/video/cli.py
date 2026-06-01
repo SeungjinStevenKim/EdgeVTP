@@ -30,6 +30,8 @@ RUNTIME_DEFAULTS = {
     "oncoming_only": True,
     "oncoming_min_dy": 8.0,
     "oncoming_lookback": 12,
+    "isolate_agents": False,
+    "no_traj_clip": False,
 }
 
 
@@ -73,6 +75,16 @@ def parse_args(argv=None):
         "--all-trails",
         action="store_true",
         help="Draw prediction trails for all directions (default: oncoming only)",
+    )
+    parser.add_argument(
+        "--isolate-agents",
+        action="store_true",
+        help="Run inference per agent independently (disables scene graph interactions)",
+    )
+    parser.add_argument(
+        "--no-traj-clip",
+        action="store_true",
+        help="Disable trajectory clipping/alignment postprocess and draw raw model output",
     )
     return parser.parse_args(argv)
 
