@@ -54,21 +54,40 @@ def final_displacement_error(pred_pos, pred_pos_gt, mode='sum'):
         return torch.sum(dist)
     return dist
 
-def getGraphDataList(obs_traj, obs_traj_rel, seq_start_end, relation_neighbor_limit_meter=None):
+def getGraphDataList(
+    obs_traj,
+    obs_traj_rel,
+    seq_start_end,
+    relation_neighbor_limit_meter=None,
+    relation_neighbor_limit_k=None,
+):
     data_list = []
     for (start, end) in seq_start_end:
         x1=obs_traj[start:end,:,:,:].reshape(end-start, int(obs_traj.shape[2]*obs_traj.shape[3]))
         x2=obs_traj_rel[start:end,:,:,:].reshape(end-start, int(obs_traj_rel.shape[2]*obs_traj_rel.shape[3]))
         x = torch.cat((x1,x2),dim=1)
         NUM_NODES = x.shape[0]
-        if relation_neighbor_limit_meter is None:
-            edge_list1, edge_list2 = [], []
-            for n in range(NUM_NODES):
-                for k in range(NUM_NODES):
-                    if k != n:
-                        edge_list1.append(n); edge_list2.append(k)
-            edge_index = torch.tensor([edge_list1, edge_list2], dtype=torch.long)
-        else:
+        if relation_neighbor_limit_k is not None and NUM_NODES > 1:
+            last_pos = obs_traj[start:end, 0, -1, :]
+            pos_np = last_pos.detach().cpu().numpy()
+            tree = cKDTree(pos_np)
+            k = min(int(relation_neighbor_limit_k), NUM_NODES - 1)
+            _, idx = tree.query(pos_np, k=k + 1)
+            if idx.ndim == 1:
+                idx = idx.reshape(1, -1)
+            src_list, dst_list = [], []
+            for i in range(NUM_NODES):
+                for j in idx[i]:
+                    j = int(j)
+                    if j != i:
+                        src_list.append(i)
+                        dst_list.append(j)
+            edge_index = (
+                torch.tensor([src_list, dst_list], dtype=torch.long)
+                if src_list
+                else torch.empty((2, 0), dtype=torch.long)
+            )
+        elif relation_neighbor_limit_meter is not None:
             last_pos = obs_traj[start:end, 0, -1, :]
             pos_np = last_pos.detach().cpu().numpy()
             tree = cKDTree(pos_np)
@@ -79,6 +98,13 @@ def getGraphDataList(obs_traj, obs_traj_rel, seq_start_end, relation_neighbor_li
                     if j != i:
                         src_list.append(i); dst_list.append(j)
             edge_index = torch.tensor([src_list, dst_list], dtype=torch.long) if src_list else torch.empty((2, 0), dtype=torch.long)
+        else:
+            edge_list1, edge_list2 = [], []
+            for n in range(NUM_NODES):
+                for k in range(NUM_NODES):
+                    if k != n:
+                        edge_list1.append(n); edge_list2.append(k)
+            edge_index = torch.tensor([edge_list1, edge_list2], dtype=torch.long)
         data_list.append(Data(x=x, x_cx=x1, x_delta=x2, edge_index=edge_index.to(obs_traj.device), num_nodes=NUM_NODES))
     return data_list
 
